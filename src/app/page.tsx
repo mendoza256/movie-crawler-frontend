@@ -1,15 +1,16 @@
-// pages/index.js
-import React, { useState, useEffect } from "react";
+"use client";
+
+import React, { useEffect, useState } from "react";
 
 const Home = () => {
-  const [movies, setMovies] = useState([]);
-
+  const [data, setData] = useState([]);
   useEffect(() => {
     const fetchData = async () => {
       try {
         const response = await fetch("http://localhost:3001/crawl");
         const data = await response.json();
-        console.log(data); // Handle the response data and update state
+        // console.log(data);
+        setData(data);
       } catch (error) {
         console.error("Error fetching data:", error);
       }
@@ -20,8 +21,12 @@ const Home = () => {
 
   return (
     <div>
-      <h1>Movies in Berlin Cinemas</h1>
-      {/* Display movie information */}
+      <h1>Movies showing at Berlin Yorck Kinos</h1>
+      {data?.movieTitles?.map((movie, i) => (
+        <div key={i}>
+          <h2>{movie}</h2>
+        </div>
+      ))}
     </div>
   );
 };
