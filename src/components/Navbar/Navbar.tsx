@@ -16,8 +16,15 @@ const Navbar = () => {
     <NavigationMenu className="section mx-auto">
       <NavigationMenuList>
         <NavigationMenuItem>
-          <Link href={"/"}>Home</Link>
-          <Link href={"/login"}>Login</Link>
+          <Link href={"/"} className="mx-2">
+            Home
+          </Link>
+          <Link className="mx-2" href={"/login"}>
+            Login
+          </Link>
+          <Link className="mx-2" href={"/signup"}>
+            Sign up
+          </Link>
           {/* <NavigationMenuTrigger></NavigationMenuTrigger>
           <NavigationMenuContent>
             <NavigationMenuLink>Link</NavigationMenuLink>
