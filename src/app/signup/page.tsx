@@ -15,25 +15,37 @@ import { Input } from "@/components/ui/input";
 import { useForm } from "react-hook-form";
 import { Button } from "@/components/ui/button";
 import Navbar from "@/components/Navbar/Navbar";
-import { useState } from "react";
 
-const formSchema = z.object({
-  email: z.string().min(2).max(50),
-  password: z.string().min(5).max(32),
-});
+const formSchema = z
+  .object({
+    username: z.string().min(2).max(50),
+    email: z.string().min(2).max(50),
+    password: z.string().min(5).max(32),
+    repeatPassword: z.string().min(5).max(32),
+  })
+  .refine(
+    (values) => {
+      return values.password === values.repeatPassword;
+    },
+    {
+      message: "Passwords must match!",
+      path: ["confirmPassword"],
+    }
+  );
 
-const Login = () => {
-  const [error, setError] = useState(null);
+const Signup = () => {
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
+      username: "",
       email: "",
       password: "",
+      repeatPassword: "",
     },
   });
 
   function onSubmit(values: z.infer<typeof formSchema>) {
-    fetch("/auth/login", {
+    fetch("/auth/signup", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -43,9 +55,7 @@ const Login = () => {
       .then((res) => {
         if (res.status === 200) {
           res.json().then((data) => {
-            const token = data.token;
-            localStorage.setItem("token", token);
-            window.location.href = "/";
+            console.log(data);
           });
         }
       })
@@ -58,9 +68,21 @@ const Login = () => {
     <>
       <Navbar />
       <div className="container max-w-80 mt-10">
-        <h1 className="mb-4 text-center text-xl">Login Page</h1>
+        <h1 className="mb-4 text-center text-xl">Sign Up Page</h1>
         <FormProvider {...form}>
           <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
+            <FormField
+              control={form.control}
+              name="username"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Username</FormLabel>
+                  <FormControl>
+                    <Input placeholder="Username" {...field} />
+                  </FormControl>
+                </FormItem>
+              )}
+            />
             <FormField
               control={form.control}
               name="email"
@@ -86,9 +108,23 @@ const Login = () => {
                 </FormItem>
               )}
             />
-            <Button className="mx-auto" type="submit">
-              Submit
-            </Button>
+            <FormField
+              control={form.control}
+              name="repeatPassword"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Repeat Password</FormLabel>
+                  <FormControl>
+                    <Input placeholder="Repeat Password" {...field} />
+                  </FormControl>
+                  <FormDescription>
+                    Set your email and password.
+                  </FormDescription>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+            <Button type="submit">Submit</Button>
           </form>
         </FormProvider>
       </div>
@@ -96,4 +132,4 @@ const Login = () => {
   );
 };
 
-export default Login;
+export default Signup;
