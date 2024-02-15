@@ -1,7 +1,6 @@
-export const dynamic = "force-dynamic"; // defaults to auto
+export const dynamic = "force-dynamic";
 
 export async function POST(request: Request) {
-  console.log("request", request.body);
   try {
     const res = await fetch("http://localhost:3001/auth/signup", {
       method: "POST",
@@ -12,7 +11,7 @@ export async function POST(request: Request) {
     });
     const data = await res.json();
     return new Response(JSON.stringify(data), {
-      status: 200,
+      status: res.status,
       headers: {
         "Access-Control-Allow-Origin": "*",
         "Access-Control-Allow-Methods": "GET, POST, PUT, DELETE, OPTIONS",

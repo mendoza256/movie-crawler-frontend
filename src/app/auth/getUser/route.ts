@@ -1,11 +1,12 @@
 export const dynamic = "force-dynamic";
 
-export async function POST(request: Request) {
+export async function GET(request: Request) {
   const body = await request.json();
-  const res = await fetch("http://localhost:3001/auth/login", {
-    method: "POST",
+  const res = await fetch("http://localhost:3001/auth/getUser", {
+    method: "GET",
     headers: {
       "Content-Type": "application/json",
+      authorization: "Bearer " + localStorage.getItem("token"),
     },
     body: JSON.stringify(body),
   });

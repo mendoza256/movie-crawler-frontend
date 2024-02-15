@@ -23,7 +23,7 @@ const formSchema = z.object({
 });
 
 const Login = () => {
-  const [error, setError] = useState(null);
+  const [error, setError] = useState("");
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
@@ -32,26 +32,30 @@ const Login = () => {
     },
   });
 
-  function onSubmit(values: z.infer<typeof formSchema>) {
-    fetch("/auth/login", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify(values),
-    })
-      .then((res) => {
-        if (res.status === 200) {
-          res.json().then((data) => {
-            const token = data.token;
-            localStorage.setItem("token", token);
-            window.location.href = "/";
-          });
-        }
-      })
-      .catch((err) => {
-        console.error("Error:", err);
+  async function onSubmit(values: z.infer<typeof formSchema>) {
+    try {
+      const res = await fetch("/auth/login", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(values),
       });
+
+      if (res.status === 200) {
+        const data = await res.json();
+        const token = data.token;
+        localStorage.setItem("token", token);
+        window.location.href = "/";
+      } else if (res.status === 401) {
+        setError("Invalid email or password");
+      } else {
+        setError("An error occurred");
+      }
+    } catch (err) {
+      console.log("HERE");
+      console.error("Error:", err);
+    }
   }
 
   return (
@@ -86,6 +90,7 @@ const Login = () => {
                 </FormItem>
               )}
             />
+            {error && <FormMessage>{error}</FormMessage>}
             <Button className="mx-auto" type="submit">
               Submit
             </Button>

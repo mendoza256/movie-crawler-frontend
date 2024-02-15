@@ -25,10 +25,6 @@ const Navbar = () => {
           <Link className="mx-2" href={"/signup"}>
             Sign up
           </Link>
-          {/* <NavigationMenuTrigger></NavigationMenuTrigger>
-          <NavigationMenuContent>
-            <NavigationMenuLink>Link</NavigationMenuLink>
-          </NavigationMenuContent> */}
         </NavigationMenuItem>
         <NavigationMenuItem>
           <ThemeToggle />
