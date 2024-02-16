@@ -8,6 +8,7 @@ import Navbar from "@/components/Navbar/Navbar";
 
 const Home = () => {
   const [data, setData] = useState([]);
+  const [user, setUser] = useState({} as any);
   const [loading, setLoading] = useState(false);
   const numberOfSkeletons = 15;
 
@@ -38,24 +39,34 @@ const Home = () => {
         },
       })
         .then((res) => res.json())
-        .then((data) => console.log(data.user));
+        .then((data) => setUser(data.user));
     } catch (error) {
       console.error("Error fetching session:", error);
     }
   }
 
+  console.log(user);
+
   return (
     <div>
       <Navbar />
-
       <section className="container mx-auto py-4">
-        <h1 className="text-2xl font-bold mb-4">Movies showing in Berlin</h1>
-        <Button className="" onClick={handleClick}>
-          Crawl cinema websites
-        </Button>
-        <Button className="" onClick={handleFetchSession}>
-          Fetch session
-        </Button>
+        <div>
+          <h1 className="text-2xl font-bold mb-4">Movies showing in Berlin</h1>
+          <Button className="mr-4" onClick={handleClick}>
+            Crawl cinema websites
+          </Button>
+          <Button className="" onClick={handleFetchSession}>
+            Fetch session
+          </Button>
+        </div>
+        <div>
+          <h2 className="text-xl font-semibold mt-8">
+            {user?.username
+              ? `Welcome, ${user?.username}`
+              : "Welcome, login to see which movies are showing in Berlin!"}
+          </h2>
+        </div>
       </section>
       <section className="container mx-auto py-4">
         {loading &&
