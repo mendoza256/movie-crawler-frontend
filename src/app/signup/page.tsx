@@ -15,6 +15,7 @@ import { Input } from "@/components/ui/input";
 import { useForm } from "react-hook-form";
 import { Button } from "@/components/ui/button";
 import Navbar from "@/components/Navbar/Navbar";
+import { useState } from "react";
 
 const formSchema = z
   .object({
@@ -34,6 +35,7 @@ const formSchema = z
   );
 
 const Signup = () => {
+  const [error, setError] = useState<string>("");
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
@@ -45,7 +47,7 @@ const Signup = () => {
   });
 
   function onSubmit(values: z.infer<typeof formSchema>) {
-    fetch("/auth/signup", {
+    fetch("http://localhost:3001/auth/register", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -56,6 +58,12 @@ const Signup = () => {
         if (res.status === 200) {
           res.json().then((data) => {
             console.log(data);
+          });
+          window.location.href = "/login";
+        }
+        if (res.status === 400) {
+          res.json().then((data) => {
+            setError(data.message);
           });
         }
       })
@@ -124,6 +132,7 @@ const Signup = () => {
                 </FormItem>
               )}
             />
+            {error && <p className="text-red-500">{error}</p>}
             <Button type="submit">Submit</Button>
           </form>
         </FormProvider>

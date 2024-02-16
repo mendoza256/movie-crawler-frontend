@@ -12,6 +12,20 @@ import { ThemeToggle } from "../ThemeToggle/ThemeToggle";
 import Link from "next/link";
 
 const Navbar = () => {
+  function handleLogout() {
+    fetch("http://localhost:3001/auth/logout", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+    }).then((res) => {
+      if (res.status === 200) {
+        localStorage.removeItem("token");
+        window.location.href = "/";
+      }
+    });
+  }
+
   return (
     <NavigationMenu className="section mx-auto">
       <NavigationMenuList>
@@ -25,10 +39,9 @@ const Navbar = () => {
           <Link className="mx-2" href={"/signup"}>
             Sign up
           </Link>
-          {/* <NavigationMenuTrigger></NavigationMenuTrigger>
-          <NavigationMenuContent>
-            <NavigationMenuLink>Link</NavigationMenuLink>
-          </NavigationMenuContent> */}
+          <Link className="mx-2" href={"#"} onClick={handleLogout}>
+            Logout
+          </Link>
         </NavigationMenuItem>
         <NavigationMenuItem>
           <ThemeToggle />
