@@ -5,6 +5,7 @@ import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { UserContextType, useUserContext } from "@/context/user-context";
+import { redirect } from "next/navigation";
 
 const Admin = () => {
   const [data, setData] = useState<any>(null);
@@ -14,12 +15,17 @@ const Admin = () => {
   const numberOfSkeletons = 15;
   const isSuperadmin = user?.role === "superadmin";
 
-  console.log("user", user);
-
   useEffect(() => {
     handleFetchSession();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
+
+  useEffect(() => {
+    if (!isSuperadmin) {
+      redirect("/login");
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [user]);
 
   function handleClick() {
     setLoading(true);
