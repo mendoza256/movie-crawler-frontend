@@ -1,42 +1,44 @@
 "use client";
 
 import React, { useEffect, useState } from "react";
+import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { UserContextType, useUserContext } from "@/context/user-context";
-import useFetchData from "@/hooks/fetchData";
-import {
-  Pagination,
-  PaginationContent,
-  PaginationEllipsis,
-  PaginationItem,
-  PaginationLink,
-  PaginationNext,
-  PaginationPrevious,
-} from "@/components/ui/pagination";
 
-const Home = () => {
-  const [page, setPage] = useState(1);
-  const { data, loading, error } = useFetchData(
-    `http://localhost:3001/movies/${page}`
-  );
+const Admin = () => {
+  const [data, setData] = useState<any>(null);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState("");
   const { user, handleFetchSession } = useUserContext() as UserContextType;
-  const numberOfSkeletons = 10;
-  const currentPages = Array.from({ length: 3 }).map((_, i) => page + i);
+  const numberOfSkeletons = 15;
+  const isSuperadmin = user?.role === "superadmin";
+
+  console.log("user", user);
 
   useEffect(() => {
     handleFetchSession();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  function handlePreviousPage() {
-    if (page > 1) {
-      setPage((prev) => prev - 1);
-    }
-  }
-
-  function handleNextPage() {
-    setPage((prev) => prev + 1);
+  function handleClick() {
+    setLoading(true);
+    fetch("http://localhost:3001/crawl", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        authorization: "Bearer " + localStorage.getItem("token"),
+      },
+    })
+      .then((res) => res.json())
+      .then((data) => {
+        setData(data.movieTitles);
+        setLoading(false);
+      })
+      .catch((error) => {
+        setError("Error fetching data: " + error);
+        setLoading(false);
+      });
   }
 
   return (
@@ -44,6 +46,11 @@ const Home = () => {
       <section className="container mx-auto py-4">
         <div>
           <h1 className="text-2xl font-bold mb-4">Movies showing in Berlin</h1>
+          {isSuperadmin && (
+            <Button className="mr-4" onClick={handleClick}>
+              Superadmin: Crawl cinema websites
+            </Button>
+          )}
         </div>
         <div>
           <h2 className="text-xl font-semibold mt-8">
@@ -65,43 +72,20 @@ const Home = () => {
               </div>
             </div>
           ))}
-        {data?.movies?.map((movie, i) => (
+        {data?.map((movie, i) => (
           <div key={i} className="mb-4 flex items-center">
             <Avatar className="">
-              <AvatarFallback>{movie.cinemas.charAt(0)}</AvatarFallback>
+              <AvatarFallback>{movie.cinema.charAt(0)}</AvatarFallback>
             </Avatar>
             <div className="ml-4">
               <h2 className="text-xl font-semibold">{movie.title}</h2>
-              <span className="font-light">Showing at {movie.cinemas}</span>
+              <span className="font-light">Showing at {movie.cinema}</span>
             </div>
           </div>
         ))}
-        <Pagination>
-          <PaginationContent>
-            <PaginationItem>
-              <PaginationPrevious href="#" onClick={handlePreviousPage} />
-            </PaginationItem>
-            {currentPages.map((_, i) => (
-              <PaginationItem key={i}>
-                <PaginationLink
-                  className={`${i === page ? "font-black" : "font-normal"}`}
-                  href="#"
-                >
-                  {i}
-                </PaginationLink>
-              </PaginationItem>
-            ))}
-            <PaginationItem>
-              <PaginationEllipsis />
-            </PaginationItem>
-            <PaginationItem>
-              <PaginationNext href="#" onClick={handleNextPage} />
-            </PaginationItem>
-          </PaginationContent>
-        </Pagination>
       </section>
     </div>
   );
 };
 
-export default Home;
+export default Admin;
