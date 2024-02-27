@@ -15,23 +15,17 @@ import { Input } from "@/components/ui/input";
 import { useForm } from "react-hook-form";
 import { Button } from "@/components/ui/button";
 import { useState } from "react";
+import { userSchema } from "@/lib/zod";
 
-const formSchema = z
-  .object({
-    username: z.string().min(2).max(50),
-    email: z.string().min(2).max(50),
-    password: z.string().min(5).max(32),
-    repeatPassword: z.string().min(5).max(32),
-  })
-  .refine(
-    (values) => {
-      return values.password === values.repeatPassword;
-    },
-    {
-      message: "Passwords must match!",
-      path: ["confirmPassword"],
-    }
-  );
+const formSchema = z.object(userSchema).refine(
+  (values) => {
+    return values.password === values.repeatPassword;
+  },
+  {
+    message: "Passwords must match!",
+    path: ["confirmPassword"],
+  }
+);
 
 const Signup = () => {
   const [error, setError] = useState<string>("");
