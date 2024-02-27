@@ -14,7 +14,6 @@ import {
 import { Input } from "@/components/ui/input";
 import { useForm } from "react-hook-form";
 import { Button } from "@/components/ui/button";
-import Navbar from "@/components/Navbar/Navbar";
 import { useState } from "react";
 
 const formSchema = z.object({
@@ -53,14 +52,12 @@ const Login = () => {
         setError("An error occurred");
       }
     } catch (err) {
-      console.log("HERE");
       console.error("Error:", err);
     }
   }
 
   return (
     <>
-      <Navbar />
       <div className="container max-w-80 mt-10">
         <h1 className="mb-4 text-center text-xl">Login Page</h1>
         <FormProvider {...form}>
@@ -72,7 +69,7 @@ const Login = () => {
                 <FormItem>
                   <FormLabel>E-Mail</FormLabel>
                   <FormControl>
-                    <Input placeholder="E-Mail" {...field} />
+                    <Input type="email" placeholder="E-Mail" {...field} />
                   </FormControl>
                 </FormItem>
               )}
@@ -84,7 +81,7 @@ const Login = () => {
                 <FormItem>
                   <FormLabel>Password</FormLabel>
                   <FormControl>
-                    <Input placeholder="Password" {...field} />
+                    <Input type="password" placeholder="Password" {...field} />
                   </FormControl>
                   <FormMessage />
                 </FormItem>

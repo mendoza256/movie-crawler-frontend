@@ -14,7 +14,6 @@ import {
 import { Input } from "@/components/ui/input";
 import { useForm } from "react-hook-form";
 import { Button } from "@/components/ui/button";
-import Navbar from "@/components/Navbar/Navbar";
 import { useState } from "react";
 
 const formSchema = z
@@ -74,7 +73,6 @@ const Signup = () => {
 
   return (
     <>
-      <Navbar />
       <div className="container max-w-80 mt-10">
         <h1 className="mb-4 text-center text-xl">Sign Up Page</h1>
         <FormProvider {...form}>

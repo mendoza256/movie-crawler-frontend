@@ -4,10 +4,10 @@ import React, { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
-import Navbar from "@/components/Navbar/Navbar";
 
 const Home = () => {
   const [data, setData] = useState([]);
+  const [error, setError] = useState("");
   const [user, setUser] = useState({} as any);
   const [loading, setLoading] = useState(false);
   const numberOfSkeletons = 15;
@@ -15,12 +15,23 @@ const Home = () => {
   const fetchData = async () => {
     setLoading(true);
     try {
-      const response = await fetch("http://localhost:3001/crawl");
+      // fetch localhost:3001/crawl with user in request
+      const response = await fetch("http://localhost:3001/crawl", {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json",
+          authorization: "Bearer " + localStorage.getItem("token"),
+        },
+      });
+
+      if (!response.ok) {
+        throw new Error("Request failed with status " + response.status);
+      }
       const data = await response.json();
       setData(data.movieTitles);
       setLoading(false);
     } catch (error) {
-      console.error("Error fetching data:", error);
+      setError("Error fetching data: " + error);
       setLoading(false);
     }
   };
@@ -45,11 +56,11 @@ const Home = () => {
     }
   }
 
-  console.log(user);
+  // console.log("user", user);
+  // console.log("error", error);
 
   return (
     <div>
-      <Navbar />
       <section className="container mx-auto py-4">
         <div>
           <h1 className="text-2xl font-bold mb-4">Movies showing in Berlin</h1>
@@ -66,19 +77,17 @@ const Home = () => {
               ? `Welcome, ${user?.username}`
               : "Welcome, login to see which movies are showing in Berlin!"}
           </h2>
+          {error && <span className="text-red-600">{error}</span>}
         </div>
       </section>
       <section className="container mx-auto py-4">
         {loading &&
           Array.from({ length: numberOfSkeletons }).map((_, i) => (
             <div key={i} className="mb-4 flex items-center">
-              <Skeleton key={i} className="w-[50px] h-[50px] rounded-full" />
+              <Skeleton className="w-[50px] h-[50px] rounded-full" />
               <div className="ml-4">
-                <Skeleton
-                  key={i}
-                  className="w-[300px] h-[20px] mb-3 rounded-full"
-                />
-                <Skeleton key={i} className="w-[150px] h-[20px] rounded-full" />
+                <Skeleton className="w-[300px] h-[20px] mb-3 rounded-full" />
+                <Skeleton className="w-[150px] h-[20px] rounded-full" />
               </div>
             </div>
           ))}
