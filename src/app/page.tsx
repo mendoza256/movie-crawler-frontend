@@ -18,14 +18,15 @@ import {
 const Home = () => {
   const [page, setPage] = useState(1);
   const { data, loading, error } = useFetchData(
-    `http://localhost:3001/movies/${page}`
+    `http://localhost:3000/api/movies/`
   );
   const { user, handleFetchSession } = useUserContext() as UserContextType;
   const numberOfSkeletons = 10;
   const currentPages = Array.from({ length: 3 }).map((_, i) => page + i);
+  const movies = data as any[];
 
   useEffect(() => {
-    handleFetchSession();
+    // handleFetchSession();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
@@ -38,6 +39,8 @@ const Home = () => {
   function handleNextPage() {
     setPage((prev) => prev + 1);
   }
+
+  console.log(data);
 
   return (
     <div>
@@ -65,40 +68,47 @@ const Home = () => {
               </div>
             </div>
           ))}
-        {data?.movies?.map((movie, i) => (
-          <div key={i} className="mb-4 flex items-center">
-            <Avatar className="">
-              <AvatarFallback>{movie.cinemas.charAt(0)}</AvatarFallback>
-            </Avatar>
-            <div className="ml-4">
-              <h2 className="text-xl font-semibold">{movie.title}</h2>
-              <span className="font-light">Showing at {movie.cinemas}</span>
+        {movies &&
+          movies?.map((movie, i) => (
+            <div key={i} className="mb-4 flex items-center">
+              <Avatar className="">
+                <AvatarFallback>{movie.cinemas.charAt(0)}</AvatarFallback>
+              </Avatar>
+              <div className="ml-4">
+                <h2 className="text-xl font-semibold">{movie.title}</h2>
+                <a href={movie.cinemaUrl}>
+                  <span className="font-light">
+                    Showing at {movie.cinemaName}
+                  </span>
+                </a>
+              </div>
             </div>
-          </div>
-        ))}
-        <Pagination>
-          <PaginationContent>
-            <PaginationItem>
-              <PaginationPrevious href="#" onClick={handlePreviousPage} />
-            </PaginationItem>
-            {currentPages.map((_, i) => (
-              <PaginationItem key={i}>
-                <PaginationLink
-                  className={`${i === page ? "font-black" : "font-normal"}`}
-                  href="#"
-                >
-                  {i}
-                </PaginationLink>
+          ))}
+        {data ? (
+          <Pagination>
+            <PaginationContent>
+              <PaginationItem>
+                <PaginationPrevious href="#" onClick={handlePreviousPage} />
               </PaginationItem>
-            ))}
-            <PaginationItem>
-              <PaginationEllipsis />
-            </PaginationItem>
-            <PaginationItem>
-              <PaginationNext href="#" onClick={handleNextPage} />
-            </PaginationItem>
-          </PaginationContent>
-        </Pagination>
+              {currentPages.map((_, i) => (
+                <PaginationItem key={i}>
+                  <PaginationLink
+                    className={`${i === page ? "font-black" : "font-normal"}`}
+                    href="#"
+                  >
+                    {i}
+                  </PaginationLink>
+                </PaginationItem>
+              ))}
+              <PaginationItem>
+                <PaginationEllipsis />
+              </PaginationItem>
+              <PaginationItem>
+                <PaginationNext href="#" onClick={handleNextPage} />
+              </PaginationItem>
+            </PaginationContent>
+          </Pagination>
+        ) : null}
       </section>
     </div>
   );
