@@ -11,6 +11,7 @@ import {
 import { ThemeToggle } from "../ThemeToggle/ThemeToggle";
 import Link from "next/link";
 import { UserContextType, useUserContext } from "@/context/user-context";
+import { UserButton } from "@clerk/nextjs";
 
 const Navbar = () => {
   const { user, handleLogout } = useUserContext() as UserContextType;
@@ -18,26 +19,11 @@ const Navbar = () => {
   return (
     <NavigationMenu className="section mx-auto">
       <NavigationMenuList>
-        <NavigationMenuItem>
+        <NavigationMenuItem className="flex">
           <Link href={"/"} className="mx-2">
             Home
           </Link>
-          {!user && (
-            <>
-              <Link className="mx-2" href={"/login"}>
-                Login
-              </Link>
-
-              <Link className="mx-2" href={"/signup"}>
-                Sign up
-              </Link>
-            </>
-          )}
-          {user && (
-            <Link className="mx-2" href={"#"} onClick={handleLogout}>
-              Logout
-            </Link>
-          )}
+          <UserButton />
         </NavigationMenuItem>
         <NavigationMenuItem>
           <ThemeToggle />

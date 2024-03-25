@@ -72,10 +72,12 @@ const Home = () => {
           movies?.map((movie, i) => (
             <div key={i} className="mb-4 flex items-center">
               <Avatar className="">
-                <AvatarFallback>{movie.cinemas.charAt(0)}</AvatarFallback>
+                <AvatarFallback>{movie.cinemaName.charAt(0)}</AvatarFallback>
               </Avatar>
               <div className="ml-4">
-                <h2 className="text-xl font-semibold">{movie.title}</h2>
+                <a href={movie.movieUrl}>
+                  <h2 className="text-xl font-semibold">{movie.title}</h2>
+                </a>
                 <a href={movie.cinemaUrl}>
                   <span className="font-light">
                     Showing at {movie.cinemaName}
