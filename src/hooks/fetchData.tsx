@@ -7,16 +7,18 @@ interface FetchDataResult {
   error: string;
 }
 
-const useFetchData = (url: string): FetchDataResult => {
+const useFetchData = (url: string, page?: string): FetchDataResult => {
   const [data, setData] = useState(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
+  const pageNumber = page ? parseInt(page) : 1;
+  const fetchUrl = page ? `${url}?page=${pageNumber}` : url;
 
   useEffect(() => {
     const fetchData = async () => {
       setLoading(true);
       try {
-        const response = await fetch(url, {
+        const response = await fetch(fetchUrl, {
           method: "GET",
         });
 
@@ -33,7 +35,7 @@ const useFetchData = (url: string): FetchDataResult => {
     };
 
     fetchData();
-  }, [url]); // fetchData will be called whenever `url` changes
+  }, [url, page]); // fetchData will be called whenever `url` changes
 
   return { data, loading, error };
 };
