@@ -78,3 +78,10 @@
 .cl-userButtonPopoverFooter {
   display: none;
 }
+
+div[class^="cl-internal-"] {
+  p,
+  a {
+    display: none;
+  }
+}
