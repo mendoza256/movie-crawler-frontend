@@ -6,14 +6,9 @@ import {
 import { ThemeToggle } from "../ThemeToggle/ThemeToggle";
 import Link from "next/link";
 import { UserButton } from "@clerk/nextjs";
-// import VideoCamIcon from "../../../public/videocam-outline.svg";
-import { currentUser } from "@clerk/nextjs";
+import { auth } from "@clerk/nextjs";
 
-const Navbar = async () => {
-  const user = await currentUser();
-  const email = user?.emailAddresses[0].emailAddress;
-  console.log(user);
-
+const Navbar = () => {
   return (
     <NavigationMenu className="w-full fixed top-0 border-b-2 border-b-slate-50 bg-background p-2">
       <NavigationMenuList className="flex justify-between gap-4">
@@ -23,10 +18,8 @@ const Navbar = async () => {
             HOME
           </Link>
         </NavigationMenuItem>
-        <NavigationMenuItem>
-          {email
-            ? `Welcome, ${email}`
-            : "Welcome, login to see which movies are showing in Berlin!"}
+        <NavigationMenuItem className="flex items-center">
+          <span>Welcome, login to see which movies are showing in Berlin!</span>
         </NavigationMenuItem>
         <NavigationMenuItem>
           <UserButton />
