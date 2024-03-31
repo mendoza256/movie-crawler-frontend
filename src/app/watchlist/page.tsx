@@ -35,32 +35,38 @@ const Watchlist = () => {
   }
 
   return (
-    <>
-      <div className="container max-w-80 mt-10">
-        <h1 className="mb-4 text-center text-xl">Login Page</h1>
+    <section>
+      <div className="container mt-10">
+        <h1 className="mb-4 text-3xl font-bold uppercase">Watchlist</h1>
         <FormProvider {...form}>
-          <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
+          <form
+            onSubmit={form.handleSubmit(onSubmit)}
+            className="space-y-8 flex gap-4"
+          >
             <FormField
               control={form.control}
               name="newWatchlistEntry"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Password</FormLabel>
+                  <FormLabel>Movie Name</FormLabel>
                   <FormControl>
-                    <Input type="password" placeholder="Password" {...field} />
+                    <Input
+                      className="min-w-80 w-96"
+                      type="text"
+                      placeholder="Akira"
+                      {...field}
+                    />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
               )}
             />
             {error && <FormMessage>{error}</FormMessage>}
-            <Button className="mx-auto" type="submit">
-              Submit
-            </Button>
+            <Button type="submit">Search</Button>
           </form>
         </FormProvider>
       </div>
-    </>
+    </section>
   );
 };
 
