@@ -35,7 +35,7 @@ const useFetchData = (url: string, page?: string): FetchDataResult => {
     };
 
     fetchData();
-  }, [url, page]); // fetchData will be called whenever `url` changes
+  }, [fetchUrl, page]); // fetchData will be called whenever `url` changes
 
   return { data, loading, error };
 };
