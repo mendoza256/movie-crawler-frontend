@@ -16,22 +16,45 @@ import { Button } from "@/components/ui/button";
 import { useState } from "react";
 
 const formSchema = z.object({
-  userId: z.string().min(2).max(50),
   newWatchlistEntry: z.string().min(4).max(50),
 });
 
 const Watchlist = () => {
   const [error, setError] = useState("");
+  const [movies, setMovies] = useState([]);
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
-      userId: "",
       newWatchlistEntry: "",
     },
   });
 
+  console.log("movies", movies);
+
   function onSubmit(values: z.infer<typeof formSchema>) {
-    console.log("values", values);
+    console.log("submitting");
+    const movieName = values.newWatchlistEntry;
+    if (!movieName) {
+      setError("Please enter a movie name");
+      return;
+    }
+
+    try {
+      fetch(`http://localhost:3000/api/watchlist?query=${movieName}`, {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: "Bearer " + process.env.TMDB_API_KEY,
+        },
+      })
+        .then((res) => res.json())
+        .then((data) => {
+          setMovies(data);
+        });
+    } catch (err) {
+      setError("An error occurred: " + err);
+      console.error("Error:", err);
+    }
   }
 
   return (
