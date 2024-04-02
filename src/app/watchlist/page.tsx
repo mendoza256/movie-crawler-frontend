@@ -16,7 +16,7 @@ import { Button } from "@/components/ui/button";
 import { useState } from "react";
 
 const formSchema = z.object({
-  newWatchlistEntry: z.string().min(4).max(50),
+  title: z.string().min(4).max(50),
 });
 
 const Watchlist = () => {
@@ -25,35 +25,28 @@ const Watchlist = () => {
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
-      newWatchlistEntry: "",
+      title: "",
     },
   });
 
   console.log("movies", movies);
 
   function onSubmit(values: z.infer<typeof formSchema>) {
-    console.log("submitting");
-    const movieName = values.newWatchlistEntry;
-    if (!movieName) {
-      setError("Please enter a movie name");
-      return;
-    }
-
     try {
-      fetch(`http://localhost:3000/api/watchlist?query=${movieName}`, {
-        method: "GET",
+      const contentType = "application/json";
+      const res = fetch("/api/watchlist", {
+        method: "POST",
         headers: {
-          "Content-Type": "application/json",
-          Authorization: "Bearer " + process.env.TMDB_API_KEY,
+          Accept: contentType,
+          "Content-Type": contentType,
         },
-      })
-        .then((res) => res.json())
-        .then((data) => {
-          setMovies(data);
-        });
-    } catch (err) {
-      setError("An error occurred: " + err);
-      console.error("Error:", err);
+        body: JSON.stringify(form),
+      });
+      if (!res.ok) {
+        throw new Error(res.status.toString());
+      }
+    } catch (error) {
+      setError("Failed to add Movie to Watchlist. Please try again.");
     }
   }
 
@@ -68,7 +61,7 @@ const Watchlist = () => {
           >
             <FormField
               control={form.control}
-              name="newWatchlistEntry"
+              name="title"
               render={({ field }) => (
                 <FormItem>
                   <FormLabel>Movie Name</FormLabel>

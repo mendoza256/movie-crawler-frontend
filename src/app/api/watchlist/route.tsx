@@ -1,3 +1,4 @@
+import clientPromise from "@/lib/mongodb";
 import { NextApiRequest, NextApiResponse } from "next";
 
 export async function GET(req: NextApiRequest, res: NextApiResponse) {
@@ -20,5 +21,23 @@ export async function GET(req: NextApiRequest, res: NextApiResponse) {
     }
   } else {
     res.status(400).json({ error: "Missing movie name parameter" });
+  }
+}
+
+export async function POST(req: NextApiRequest, res: NextApiResponse) {
+  const movie = req.body;
+  // const currentUser = req.user;
+
+  if (!movie) {
+    res.status(400).json({ error: "Missing movie data" });
+    return;
+  }
+
+  try {
+    const client = await clientPromise;
+    const db = client.db("movie-crawler");
+    res.status(200).json(movies);
+  } catch (e) {
+    console.error(e);
   }
 }
