@@ -57,9 +57,14 @@ export async function POST(req: Request) {
 
   if (eventType === "user.created") {
     // Do something with the user created event
-    const user = {
-      id: data.id,
-    };
+    // API call to POST api/user
+    await fetch("/api/user", {
+      method: "POST",
+      body: body,
+      headers: {
+        "Content-Type": "application/json",
+      },
+    });
   }
 
   if (eventType === "user.updated") {
