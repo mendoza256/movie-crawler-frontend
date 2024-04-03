@@ -28,7 +28,7 @@ const Admin = () => {
 
   function handleClick() {
     setLoading(true);
-    fetch("http://localhost:3001/crawl", {
+    fetch(process.env.FRONTEND_BASE_URL + "/crawl", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",

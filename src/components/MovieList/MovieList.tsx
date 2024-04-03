@@ -11,7 +11,7 @@ const MovieList = () => {
   const searchParams = useSearchParams();
   const page = searchParams.get("page") || "1";
   const { data, loading, error } = useFetchData(
-    `http://localhost:3000/api/movies`,
+    `${process.env.FRONTEND_BASE_URL}/api/movies`,
     page
   );
 
