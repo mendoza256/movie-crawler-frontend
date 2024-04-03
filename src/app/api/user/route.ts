@@ -2,20 +2,26 @@
 import { NextApiRequest, NextApiResponse } from "next";
 import User from "@/models/User";
 import dbConnect from "@/lib/mongoose";
+import { NextResponse } from "next/server";
 
-export async function POST(req: NextApiRequest, res: NextApiResponse) {
+export async function POST(req: Request) {
+  const body = await req.json();
   await dbConnect();
-  const { id } = req.body?.data;
+  const { id, first_name, last_name, primary_email_address_id } = body.data;
   const watchlist = [] as string[];
-  const newUser = { id, watchlist };
+  const newUser = {
+    id,
+    first_name,
+    last_name,
+    primary_email_address_id,
+    watchlist,
+  };
 
   try {
-    const user = await User.create(
-      newUser
-    ); /* create a new model in the database */
-    res.status(201).json({ success: true, data: user });
+    const user = await User.create(newUser);
+    return NextResponse.json({ success: true, data: user });
   } catch (error) {
-    res.status(400).json({ success: false });
+    return NextResponse.json({ success: false });
   }
 }
 

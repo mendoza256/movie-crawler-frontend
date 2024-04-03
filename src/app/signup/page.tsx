@@ -40,7 +40,7 @@ const Signup = () => {
   });
 
   function onSubmit(values: z.infer<typeof formSchema>) {
-    fetch("http://localhost:3001/auth/register", {
+    fetch(process.env.BACKEND_BASE_URL + "/auth/register", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",

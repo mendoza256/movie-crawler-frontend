@@ -53,12 +53,10 @@ export async function POST(req: Request) {
   const eventType = evt.type;
 
   console.log(`Webhook with and ID of ${id} and type of ${eventType}`);
-  console.log("Webhook body:", body);
+  // console.log("Webhook body:", body);
 
   if (eventType === "user.created") {
-    // Do something with the user created event
-    // API call to POST api/user
-    await fetch("/api/user", {
+    await fetch(process.env.FRONTEND_BASE_URL + "/api/user", {
       method: "POST",
       body: body,
       headers: {

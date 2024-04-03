@@ -1,6 +1,8 @@
 /* eslint-disable import/no-anonymous-default-export */
-import clientPromise from "../../../lib/mongodb";
+import dbConnect from "@/lib/mongoose";
 import { NextApiRequest, NextApiResponse } from "next";
+import Movie from "@/models/Movie";
+import { NextResponse } from "next/server";
 
 export async function GET(req: NextApiRequest, res: NextApiResponse) {
   if (typeof req.url === "undefined") {
@@ -8,24 +10,28 @@ export async function GET(req: NextApiRequest, res: NextApiResponse) {
     return;
   }
 
-  const searchParams = new URL(req.url).searchParams;
-  const page = searchParams.get("page");
+  await dbConnect();
 
-  if (typeof page !== "undefined" && !isNaN(Number(page))) {
-    try {
-      const client = await clientPromise;
-      const db = client.db("movie-crawler");
-      const movies = await db
-        .collection("movies")
-        .find({})
-        .skip((Number(page) - 1) * 10)
-        .limit(12)
-        .toArray();
-      return Response.json(movies);
-    } catch (e) {
-      console.error(e);
-    }
-  } else {
-    res.status(400).json({ error: "Missing page parameter" });
+  const searchParams = new URL(req.url, "http://localhost").searchParams;
+  const page = Number(searchParams.get("page")) || 1;
+  const limit = Number(searchParams.get("limit")) || 10; // default limit to 10 documents per page
+
+  const skip = (page - 1) * limit;
+
+  try {
+    const movies = await Movie.find().skip(skip).limit(limit);
+    const total = await Movie.countDocuments();
+
+    return NextResponse.json({
+      data: movies,
+      meta: {
+        totalDocuments: total,
+        currentPage: page,
+        totalPages: Math.ceil(total / limit),
+      },
+    });
+  } catch (e) {
+    console.error(e);
+    return NextResponse.json({ error: "Error fetching data" });
   }
 }
