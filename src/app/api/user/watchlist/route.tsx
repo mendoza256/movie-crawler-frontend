@@ -9,24 +9,18 @@ export async function POST(req: Request, res: NextApiResponse) {
     const body = await req.json();
     const { movieTitle } = body;
     const user = await currentUser();
-    console.log("req.body", body);
-    console.log("user.id", user?.id);
 
     if (!user || !user?.id || movieTitle === "") {
       return NextResponse.json({ success: false });
     }
 
-    const filter = { id: user.id };
-    const update = movieTitle ? { watchlist: movieTitle } : {};
-    const updatedUser = await User.findOneAndUpdate(filter, update);
-    console.log("updatedUser", updatedUser);
+    const updatedUser = await User.findOneAndUpdate(
+      { id: user.id },
+      { $push: { watchlist: movieTitle } },
+      { new: true }
+    );
     return NextResponse.json({ success: true, data: updatedUser });
   } catch (error) {
     return NextResponse.json({ success: false });
   }
-  // update current user's watchlist with movieTitle
-
-  await dbConnect();
-
-  return NextResponse.json({ success: true, data: user });
 }
