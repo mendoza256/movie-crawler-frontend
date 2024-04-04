@@ -12,8 +12,8 @@ import {
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { useForm } from "react-hook-form";
-import { Button } from "@/components/ui/button";
 import { useState } from "react";
+import WatchlistList from "./watchlistList";
 
 const formSchema = z.object({
   movieTitle: z.string().min(4).max(50),
@@ -22,15 +22,12 @@ const formSchema = z.object({
 const Watchlist = () => {
   const [error, setError] = useState("");
   const [message, setMessage] = useState("");
-  const [movies, setMovies] = useState([]);
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
       movieTitle: "",
     },
   });
-
-  console.log("movies", movies);
 
   async function onSubmit(values: z.infer<typeof formSchema>) {
     try {
@@ -87,9 +84,14 @@ const Watchlist = () => {
               )}
             />
             {error && <FormMessage>{error}</FormMessage>}
-            <Button type="submit">Add</Button>
+            {/* <Button type="submit">Add</Button>
+             */}
+            <button type="submit" className="btn">
+              Button
+            </button>
           </form>
           {message && <FormMessage>{message}</FormMessage>}
+          <WatchlistList />
         </FormProvider>
       </div>
     </section>
