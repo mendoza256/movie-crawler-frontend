@@ -16,34 +16,43 @@ import { Button } from "@/components/ui/button";
 import { useState } from "react";
 
 const formSchema = z.object({
-  title: z.string().min(4).max(50),
+  movieTitle: z.string().min(4).max(50),
 });
 
 const Watchlist = () => {
   const [error, setError] = useState("");
+  const [message, setMessage] = useState("");
   const [movies, setMovies] = useState([]);
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
-      title: "",
+      movieTitle: "",
     },
   });
 
   console.log("movies", movies);
 
-  function onSubmit(values: z.infer<typeof formSchema>) {
+  async function onSubmit(values: z.infer<typeof formSchema>) {
     try {
       const contentType = "application/json";
-      const res = fetch("/api/watchlist", {
+      const res = await fetch("/api/user/watchlist", {
         method: "POST",
         headers: {
           Accept: contentType,
           "Content-Type": contentType,
         },
-        body: JSON.stringify(form),
+        body: JSON.stringify(values),
       });
       if (!res.ok) {
         throw new Error(res.status.toString());
+      } else {
+        const data = await res.json();
+        if (data.success) {
+          setMessage("Movie added to Watchlist.");
+          form.reset();
+        } else {
+          setError("Failed to add Movie to Watchlist. Please try again.");
+        }
       }
     } catch (error) {
       setError("Failed to add Movie to Watchlist. Please try again.");
@@ -61,7 +70,7 @@ const Watchlist = () => {
           >
             <FormField
               control={form.control}
-              name="title"
+              name="movieTitle"
               render={({ field }) => (
                 <FormItem>
                   <FormLabel>Movie Name</FormLabel>
@@ -78,8 +87,9 @@ const Watchlist = () => {
               )}
             />
             {error && <FormMessage>{error}</FormMessage>}
-            <Button type="submit">Search</Button>
+            <Button type="submit">Add</Button>
           </form>
+          {message && <FormMessage>{message}</FormMessage>}
         </FormProvider>
       </div>
     </section>
