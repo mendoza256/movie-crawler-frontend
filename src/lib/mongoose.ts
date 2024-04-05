@@ -36,7 +36,7 @@ async function dbConnect() {
     throw e;
   }
 
-  console.log("Connected to MongoDB");
+  // console.log("Connected to MongoDB");
 
   return cached.conn;
 }

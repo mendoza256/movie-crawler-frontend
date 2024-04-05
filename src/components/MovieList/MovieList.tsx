@@ -1,6 +1,6 @@
 "use client";
 
-import useFetchData from "@/hooks/fetchData";
+import useFetchData from "@/fetchData/fetchData";
 import { useSearchParams } from "next/navigation";
 import Loading from "./Skeleton";
 import MovieItem from "./MovieItem";
