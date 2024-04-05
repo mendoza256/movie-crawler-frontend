@@ -65,7 +65,7 @@ const Watchlist = () => {
   }, [message]);
 
   useEffect(() => {
-    if (typeof userId === "string") {
+    if (userId) {
       fetchWatchlist(userId);
     }
   }, [userId]);
@@ -79,6 +79,10 @@ const Watchlist = () => {
       },
       body: JSON.stringify(input),
     });
+
+    if (typeof userId !== "string") {
+      throw new Error("User ID is not a string");
+    }
 
     if (!response.ok) {
       throw new Error(`Failed to add movie to watchlist: ${response.status}`);
