@@ -41,7 +41,6 @@ export async function PUT(req: NextApiRequest, res: NextApiResponse) {
 
 export async function GET(req: NextRequest, res: NextResponse) {
   await dbConnect();
-  console.log("req.query from GET user", req);
   const userId = req.nextUrl.searchParams.get("id");
 
   try {

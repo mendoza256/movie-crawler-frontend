@@ -83,3 +83,7 @@ div[class^="cl-internal-"] p,
 div[class^="cl-internal-"] a {
   display: none;
 }
+
+.avatar > div {
+  overflow: visible;
+}
