@@ -30,6 +30,7 @@ const Watchlist = () => {
   const [loadingQuery, setLoadingQuery] = useState(false);
   const [message, setMessage] = useState("");
   const [showMessage, setShowMessage] = useState(false);
+  const [movieSuggestions, setMovieSuggestions] = useState([] as string[]);
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
@@ -70,32 +71,60 @@ const Watchlist = () => {
     }
   }, [userId]);
 
+  // async function onSubmit(input: z.infer<typeof formSchema>) {
+  //   setLoadingQuery(true);
+  //   const response = await fetch("/api/user/watchlist", {
+  //     method: "POST",
+  //     headers: {
+  //       "Content-Type": "application/json",
+  //     },
+  //     body: JSON.stringify(input),
+  //   });
+
+  //   if (typeof userId !== "string") {
+  //     throw new Error("User ID is not a string");
+  //   }
+
+  //   if (!response.ok) {
+  //     throw new Error(`Failed to add movie to watchlist: ${response.status}`);
+  //   }
+
+  //   const { success } = await response.json();
+
+  //   if (success) {
+  //     setMessage("Movie added to watchlist.");
+  //     setLoadingQuery(false);
+  //     form.reset();
+  //     fetchWatchlist(userId);
+  //   } else {
+  //     setError("Failed to add movie to watchlist. Please try again.");
+  //     setLoadingQuery(false);
+  //   }
+  // }
+
   async function onSubmit(input: z.infer<typeof formSchema>) {
     setLoadingQuery(true);
-    const response = await fetch("/api/user/watchlist", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify(input),
-    });
+    try {
+      const response = await fetch(`/api/tmdb?query=${input.movieTitle}`, {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json",
+        },
+      });
 
-    if (typeof userId !== "string") {
-      throw new Error("User ID is not a string");
-    }
+      if (!response.ok) {
+        throw new Error(`Failed to look up movie: ${response.status}`);
+      }
 
-    if (!response.ok) {
-      throw new Error(`Failed to add movie to watchlist: ${response.status}`);
-    }
+      const { success, data } = await response.json();
 
-    const { success } = await response.json();
-
-    if (success) {
-      setMessage("Movie added to watchlist.");
-      setLoadingQuery(false);
-      form.reset();
-      fetchWatchlist(userId);
-    } else {
+      if (success) {
+        console.log("result", data);
+        setMovieSuggestions(data);
+        setLoadingQuery(false);
+        form.reset();
+      }
+    } catch (error) {
       setError("Failed to add movie to watchlist. Please try again.");
       setLoadingQuery(false);
     }
@@ -133,7 +162,7 @@ const Watchlist = () => {
                 {loadingQuery ? (
                   <span className="loading loading-ring loading-lg"></span>
                 ) : (
-                  "Add"
+                  "Search"
                 )}
               </button>
               {error && <FormMessage>{error}</FormMessage>}
@@ -153,7 +182,7 @@ const Watchlist = () => {
             </div>
           </FormProvider>
         </div>
-        <WatchlistItems watchlist={watchlist} loading={loading} />
+        {/* <WatchlistItems watchlist={watchlist} loading={loading} /> */}
       </div>
     </section>
   );
