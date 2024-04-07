@@ -104,42 +104,40 @@ const Watchlist = () => {
   return (
     <section className="mt-10">
       <div className="container grid lg:grid-cols-2 gap-8">
-        <div className="prose col-span-2">
+        <div className="prose lg:col-span-2">
           <h2 className="mb-4">Watchlist</h2>
         </div>
         <div className="form">
           <FormProvider {...form}>
             <form
               onSubmit={form.handleSubmit(onSubmit)}
-              className="space-y-8 flex gap-4"
+              className="space-y-8 flex gap-4 items-end"
             >
               <FormField
                 control={form.control}
                 name="movieTitle"
                 render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Movie Name</FormLabel>
-                    <FormControl>
-                      <Input
-                        className="min-w-80 w-96"
-                        type="text"
-                        placeholder="Akira"
-                        {...field}
-                      />
-                    </FormControl>
+                  <div className="form-control">
+                    <label className="label">Movie Name</label>
+                    <input
+                      className="input w-full"
+                      type="text"
+                      placeholder="Title"
+                      {...field}
+                    />
                     <FormMessage />
-                  </FormItem>
+                  </div>
                 )}
               />
-              {error && <FormMessage>{error}</FormMessage>}
-              <button type="submit" className="btn">
-                Button
+              <button type="submit" className="btn mt-auto">
+                {loadingQuery ? (
+                  <span className="loading loading-ring loading-lg"></span>
+                ) : (
+                  "Add"
+                )}
               </button>
+              {error && <FormMessage>{error}</FormMessage>}
             </form>
-
-            {loadingQuery && (
-              <span className="loading loading-ring loading-lg"></span>
-            )}
 
             <div
               role="alert"

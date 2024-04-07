@@ -1,6 +1,5 @@
-import dbConnect from "@/lib/mongoose";
 import User from "@/models/User";
-import { NextApiRequest, NextApiResponse } from "next";
+import { NextApiResponse } from "next";
 import { NextResponse } from "next/server";
 import { currentUser } from "@clerk/nextjs";
 
