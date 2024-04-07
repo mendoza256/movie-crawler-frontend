@@ -8,12 +8,6 @@ export async function GET(req: NextRequest) {
     return NextResponse.json({ success: false });
   }
 
-  console.log(
-    "full: ",
-    "https://api.themoviedb.org/3/search/movie?api_key=bdd53a5a1b27d31391a233a8e60cbacf&language=en-US&page=1&query=" +
-      query
-  );
-
   try {
     const data = await fetch(
       `https://api.themoviedb.org/3/search/movie?api_key=${process.env.TMDB_API_KEY_AUTH}&language=en-US&page=1&query=` +
