@@ -1,5 +1,6 @@
 import { TMDBMovieType } from "@/lib/baseTypes";
 import Image from "next/image";
+import { useState } from "react";
 
 interface MovieSuggestionItemsProps {
   movieSuggestions: TMDBMovieType[];
@@ -10,6 +11,7 @@ const MovieSuggestionItems = ({
   movieSuggestions,
   loading,
 }: MovieSuggestionItemsProps) => {
+  const [posting, setPosting] = useState(false);
   const skeletonAmount = 10;
   const filteredSuggestions = movieSuggestions.filter(
     (movie) => movie.poster_path !== null && movie.release_date !== ""
@@ -19,17 +21,20 @@ const MovieSuggestionItems = ({
     e: React.MouseEvent<HTMLButtonElement>,
     movie: TMDBMovieType
   ) {
+    setPosting(true);
     e.preventDefault();
     try {
-      await fetch("/api/watchlist", {
+      await fetch("/api/user/watchlist", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
         },
         body: JSON.stringify({ movie }),
       });
+      setPosting(false);
     } catch (error) {
       console.error(error);
+      setPosting(false);
     }
   }
 
@@ -70,9 +75,13 @@ const MovieSuggestionItems = ({
               <div className="card-actions justify-end">
                 <button
                   onClick={(e) => addToWatchlist(e, movie)}
-                  className="btn btn-primary"
+                  className="btn btn-primary min-w-12"
                 >
-                  Add to Watchlist
+                  {posting ? (
+                    <span className="loading loading-ring loading-lg"></span>
+                  ) : (
+                    "Add to Watchlist"
+                  )}
                 </button>
               </div>
             </div>
