@@ -23,6 +23,8 @@ export const fetchMongoDBUser = async (input: string) => {
       };
     }
   } catch (error) {
-    return { success: false, message: error.message };
+    if (error instanceof Error) {
+      return { success: false, message: "An unknown error occurred." };
+    }
   }
 };

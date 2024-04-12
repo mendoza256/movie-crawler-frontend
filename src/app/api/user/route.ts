@@ -25,17 +25,22 @@ export async function POST(req: Request) {
   }
 }
 
-export async function PUT(req: NextApiRequest, res: NextApiResponse) {
+export async function PUT(req: NextRequest, res: NextResponse) {
   await dbConnect();
 
+  const body = await req.json();
   try {
-    const user = await User.findByIdAndUpdate(req.body.id, req.body, {
+    if (!body) {
+      return NextResponse.json({ success: false });
+    }
+
+    const user = await User.findByIdAndUpdate(body.id, body, {
       new: true,
       runValidators: true,
     }); /* update a model in the database */
-    res.status(200).json({ success: true, data: user });
+    return NextResponse.json({ success: true, data: user });
   } catch (error) {
-    res.status(400).json({ success: false });
+    return NextResponse.json({ success: false });
   }
 }
 

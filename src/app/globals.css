@@ -87,3 +87,7 @@ div[class^="cl-internal-"] a {
 .avatar > div {
   overflow: visible;
 }
+
+.card.image-full::before {
+  content: none;
+}

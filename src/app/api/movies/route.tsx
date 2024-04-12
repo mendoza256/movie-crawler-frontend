@@ -1,12 +1,11 @@
 /* eslint-disable import/no-anonymous-default-export */
 import dbConnect from "@/lib/mongoose";
-import { NextApiRequest, NextApiResponse } from "next";
 import Movie from "@/models/Movie";
-import { NextResponse } from "next/server";
+import { NextRequest, NextResponse } from "next/server";
 
-export async function GET(req: NextApiRequest, res: NextApiResponse) {
+export async function GET(req: NextRequest, res: NextResponse) {
   if (typeof req.url === "undefined") {
-    res.status(400).json({ error: "Missing URL" });
+    return NextResponse.json({ error: "Invalid request" });
     return;
   }
 
