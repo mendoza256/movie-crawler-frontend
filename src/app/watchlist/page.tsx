@@ -153,7 +153,7 @@ const Watchlist = () => {
                 />
                 <button type="submit" className="btn mt-auto">
                   {loadingQuery ? (
-                    <span className="loading loading-ring loading-lg"></span>
+                    <span className="loading loading-spinner loading-lg"></span>
                   ) : (
                     "Search"
                   )}

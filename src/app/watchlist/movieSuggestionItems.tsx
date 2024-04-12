@@ -78,7 +78,7 @@ const MovieSuggestionItems = ({
                   className="btn btn-primary min-w-12"
                 >
                   {posting ? (
-                    <span className="loading loading-ring loading-lg"></span>
+                    <span className="loading loading-spinner loading-lg"></span>
                   ) : (
                     "Add to Watchlist"
                   )}
