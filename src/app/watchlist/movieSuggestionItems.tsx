@@ -10,9 +10,28 @@ const MovieSuggestionItems = ({
   movieSuggestions,
   loading,
 }: MovieSuggestionItemsProps) => {
+  const skeletonAmount = 10;
   const filteredSuggestions = movieSuggestions.filter(
     (movie) => movie.poster_path !== null && movie.release_date !== ""
   );
+
+  async function addToWatchlist(
+    e: React.MouseEvent<HTMLButtonElement>,
+    movie: TMDBMovieType
+  ) {
+    e.preventDefault();
+    try {
+      await fetch("/api/watchlist", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ movie }),
+      });
+    } catch (error) {
+      console.error(error);
+    }
+  }
 
   function shortenMovieOverview(string: string, maxLength: number) {
     if (string.length > maxLength) {
@@ -45,16 +64,24 @@ const MovieSuggestionItems = ({
             </figure>
             <div className="card-body shrink lg:opacity-0 hover:opacity-100 transition-all duration-300 ease-in-out">
               <h3 className="card-title">
-                {movie.title} <span>({movie.release_date.split("-")[0]})</span>
+                {movie.title} ({movie.release_date.split("-")[0]})
               </h3>
               <p>{shortenMovieOverview(movie.overview, 250)}</p>
               <div className="card-actions justify-end">
-                <button className="btn btn-primary">Add to Watchlist</button>
+                <button
+                  onClick={(e) => addToWatchlist(e, movie)}
+                  className="btn btn-primary"
+                >
+                  Add to Watchlist
+                </button>
               </div>
             </div>
           </div>
         ))}
-      {loading && <div className="loading loading-lg"></div>}
+      {loading &&
+        Array.from({ length: skeletonAmount }).map((_, index) => (
+          <div key={index} className="skeleton w-full h-[423px]"></div>
+        ))}
     </>
   );
 };

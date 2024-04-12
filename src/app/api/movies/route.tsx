@@ -6,7 +6,6 @@ import { NextRequest, NextResponse } from "next/server";
 export async function GET(req: NextRequest, res: NextResponse) {
   if (typeof req.url === "undefined") {
     return NextResponse.json({ error: "Invalid request" });
-    return;
   }
 
   await dbConnect();
