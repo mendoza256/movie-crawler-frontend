@@ -1,10 +1,9 @@
 import clientPromise from "@/lib/mongodb";
-import { NextApiRequest, NextApiResponse } from "next";
+import { NextRequest, NextResponse } from "next/server";
 
-export async function GET(req: NextApiRequest, res: NextApiResponse) {
+export async function GET(req: NextRequest, res: NextResponse) {
   if (typeof req.url === "undefined") {
-    res.status(400).json({ error: "Missing URL" });
-    return;
+    return NextResponse.error();
   }
 
   const searchParams = new URL(req.url).searchParams;
@@ -15,28 +14,29 @@ export async function GET(req: NextApiRequest, res: NextApiResponse) {
       const url = process.env.TMDB_BASE_URL + movieTitle;
       const response = await fetch(url);
       const data = await response.json();
-      res.status(200).json(data);
+      return NextResponse.json({ success: true, data });
     } catch (e) {
       console.error(e);
     }
   } else {
-    res.status(400).json({ error: "Missing movie name parameter" });
+    return NextResponse.error();
   }
 }
 
-export async function POST(req: NextApiRequest, res: NextApiResponse) {
+export async function POST(req: NextRequest, res: NextResponse) {
+  // TODO - Add movie to watchlist
   const movie = req.body;
   // const currentUser = req.user;
 
   if (!movie) {
-    res.status(400).json({ error: "Missing movie data" });
+    return NextResponse.error();
     return;
   }
 
   try {
     const client = await clientPromise;
     const db = client.db("movie-crawler");
-    res.status(200).json(movies);
+    return NextResponse.json({ success: true });
   } catch (e) {
     console.error(e);
   }

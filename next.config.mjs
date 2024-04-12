@@ -1,6 +1,9 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
-  // allow cors for localhost:3001
+  images: {
+    domains: ["image.tmdb.org"],
+  },
+
   async headers() {
     return [
       {

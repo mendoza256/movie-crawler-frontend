@@ -3,7 +3,7 @@ import { UserButton } from "@clerk/nextjs";
 
 const Navbar = () => {
   return (
-    <div className="bg-base-100 fixed top-0 left-0 right-0 z-10 shadow-md">
+    <div className="bg-base-100 fixed top-0 left-0 right-0 z-20 shadow-md">
       <nav className="navbar px-8 py-4 container">
         <div className="flex-1">
           <Link className="btn text-xl" href="/">

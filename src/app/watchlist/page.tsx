@@ -3,20 +3,14 @@
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { FormProvider } from "react-hook-form";
-import {
-  FormControl,
-  FormField,
-  FormItem,
-  FormLabel,
-  FormMessage,
-} from "@/components/ui/form";
-import { Input } from "@/components/ui/input";
+import { FormField, FormMessage } from "@/components/ui/form";
 import { useForm } from "react-hook-form";
 import { useEffect, useState } from "react";
-import WatchlistItems from "./watchlistItems";
 import { useAuth } from "@clerk/nextjs";
 import { fetchMongoDBUser } from "@/fetchData/fetchMongoDBUser";
 import { cn } from "@/lib/utils";
+import MovieSuggestionItems from "./movieSuggestionItems";
+import { TMDBMovieType } from "@/lib/baseTypes";
 
 const formSchema = z.object({
   movieTitle: z.string().min(4).max(50),
@@ -30,7 +24,9 @@ const Watchlist = () => {
   const [loadingQuery, setLoadingQuery] = useState(false);
   const [message, setMessage] = useState("");
   const [showMessage, setShowMessage] = useState(false);
-  const [movieSuggestions, setMovieSuggestions] = useState([] as string[]);
+  const [movieSuggestions, setMovieSuggestions] = useState(
+    [] as TMDBMovieType[]
+  );
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
@@ -120,9 +116,8 @@ const Watchlist = () => {
 
       if (success) {
         console.log("result", data);
-        setMovieSuggestions(data);
+        setMovieSuggestions(data.results);
         setLoadingQuery(false);
-        form.reset();
       }
     } catch (error) {
       setError("Failed to add movie to watchlist. Please try again.");
@@ -132,58 +127,64 @@ const Watchlist = () => {
 
   return (
     <section className="mt-10">
-      <div className="container grid lg:grid-cols-2 gap-8">
-        <div className="prose lg:col-span-2">
+      <div className="container flex gap-8">
+        <div className="prose grow basis-3/12">
           <h2 className="mb-4">Watchlist</h2>
-        </div>
-        <div className="form">
-          <FormProvider {...form}>
-            <form
-              onSubmit={form.handleSubmit(onSubmit)}
-              className="space-y-8 flex gap-4 items-end"
-            >
-              <FormField
-                control={form.control}
-                name="movieTitle"
-                render={({ field }) => (
-                  <div className="form-control">
-                    <label className="label">Movie Name</label>
-                    <input
-                      className="input w-full"
-                      type="text"
-                      placeholder="Title"
-                      {...field}
-                    />
-                    <FormMessage />
-                  </div>
-                )}
-              />
-              <button type="submit" className="btn mt-auto">
-                {loadingQuery ? (
-                  <span className="loading loading-ring loading-lg"></span>
-                ) : (
-                  "Search"
-                )}
-              </button>
-              {error && <FormMessage>{error}</FormMessage>}
-            </form>
+          <div className="form">
+            <FormProvider {...form}>
+              <form
+                onSubmit={form.handleSubmit(onSubmit)}
+                className="space-y-8 flex gap-4 items-end"
+              >
+                <FormField
+                  control={form.control}
+                  name="movieTitle"
+                  render={({ field }) => (
+                    <div className="form-control">
+                      <label className="label">Movie Name</label>
+                      <input
+                        className="input w-full"
+                        type="text"
+                        placeholder="Title"
+                        {...field}
+                      />
+                      <FormMessage />
+                    </div>
+                  )}
+                />
+                <button type="submit" className="btn mt-auto">
+                  {loadingQuery ? (
+                    <span className="loading loading-ring loading-lg"></span>
+                  ) : (
+                    "Search"
+                  )}
+                </button>
+                {error && <FormMessage>{error}</FormMessage>}
+              </form>
 
-            <div
-              role="alert"
-              className={cn(
-                "my-4 alert alert-success transition-opacity duration-500",
-                {
-                  "opacity-100": showMessage,
-                  "opacity-0": !showMessage,
-                }
-              )}
-            >
-              <span>{message}</span>
-            </div>
-          </FormProvider>
+              <div
+                role="alert"
+                className={cn(
+                  "my-4 alert alert-success transition-opacity duration-500",
+                  {
+                    "opacity-100": showMessage,
+                    "opacity-0": !showMessage,
+                  }
+                )}
+              >
+                <span>{message}</span>
+              </div>
+            </FormProvider>
+          </div>
         </div>
-        {/* <WatchlistItems watchlist={watchlist} loading={loading} /> */}
+        <div className="basis-9/12 lg:col-span-2 grid gap-8 lg:grid-cols-3 auto-rows-auto">
+          <MovieSuggestionItems
+            movieSuggestions={movieSuggestions}
+            loading={loadingQuery}
+          />
+        </div>
       </div>
+      {/* <WatchlistItems watchlist={watchlist} loading={loading} /> */}
     </section>
   );
 };
