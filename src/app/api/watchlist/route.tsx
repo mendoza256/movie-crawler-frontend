@@ -23,14 +23,14 @@ export async function GET(req: NextRequest, res: NextResponse) {
   }
 }
 
-export async function POST(req: NextRequest, res: NextResponse) {
+export async function POST(req: Request, res: NextResponse) {
   // TODO - Add movie to watchlist
-  const movie = req.body;
+  const body = await req.json();
+  const { movieId } = body;
   // const currentUser = req.user;
 
-  if (!movie) {
+  if (!movieId) {
     return NextResponse.error();
-    return;
   }
 
   try {

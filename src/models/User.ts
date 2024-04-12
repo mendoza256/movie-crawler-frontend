@@ -1,8 +1,8 @@
 import mongoose from "mongoose";
 
-export interface IUser extends mongoose.Document {
+export interface UserProps extends mongoose.Document {
   id: string;
-  watchlist?: string[];
+  watchlist?: number[];
 }
 
 const UserSchema = new mongoose.Schema({
@@ -14,8 +14,8 @@ const UserSchema = new mongoose.Schema({
   email: { type: String },
   password: { type: String },
   role: { type: String },
-  watchlist: { type: [String] },
+  watchlist: { type: [Number] },
 });
 
 export default mongoose.models.User ||
-  mongoose.model<IUser>("User", UserSchema);
+  mongoose.model<UserProps>("User", UserSchema);

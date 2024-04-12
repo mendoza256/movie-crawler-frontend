@@ -1,9 +1,9 @@
-interface IWatchlistItems {
+interface WatchlistItemsProps {
   watchlist: string[];
   loading: boolean;
 }
 
-const WatchlistItems = ({ watchlist, loading }: IWatchlistItems) => {
+const WatchlistItems = ({ watchlist, loading }: WatchlistItemsProps) => {
   const skeletonAmount = 10;
   return (
     <ul className="flex flex-col gap-4 my-4">

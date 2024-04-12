@@ -115,7 +115,6 @@ const Watchlist = () => {
       const { success, data } = await response.json();
 
       if (success) {
-        console.log("result", data);
         setMovieSuggestions(data.results);
         setLoadingQuery(false);
       }
