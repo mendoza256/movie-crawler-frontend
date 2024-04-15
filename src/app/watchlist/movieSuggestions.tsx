@@ -1,21 +1,28 @@
 import { TMDBMovieType } from "@/lib/baseTypes";
+import { useUser } from "@clerk/nextjs";
 import Image from "next/image";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
-interface MovieSuggestionItemsProps {
+interface MovieSuggestionsProps {
   movieSuggestions: TMDBMovieType[];
   loading: boolean;
 }
 
-const MovieSuggestionItems = ({
+const MovieSuggestions = ({
   movieSuggestions,
   loading,
-}: MovieSuggestionItemsProps) => {
+}: MovieSuggestionsProps) => {
   const [posting, setPosting] = useState(false);
+  const [watchlist, setWatchlist] = useState<string[]>([]);
   const skeletonAmount = 10;
   const filteredSuggestions = movieSuggestions.filter(
     (movie) => movie.poster_path !== null && movie.release_date !== ""
   );
+  const { user } = useUser();
+
+  console.log("user", user?.id);
+
+  // TODO get user watchlist
 
   async function addToWatchlist(
     e: React.MouseEvent<HTMLButtonElement>,
@@ -30,6 +37,7 @@ const MovieSuggestionItems = ({
           "Content-Type": "application/json",
         },
         body: JSON.stringify({ movie }),
+        cache: "no-cache",
       });
       setPosting(false);
     } catch (error) {
@@ -95,4 +103,4 @@ const MovieSuggestionItems = ({
   );
 };
 
-export default MovieSuggestionItems;
+export default MovieSuggestions;

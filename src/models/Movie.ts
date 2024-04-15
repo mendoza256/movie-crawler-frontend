@@ -1,23 +1,24 @@
+import { TMDBMovieType } from "@/lib/baseTypes";
 import mongoose from "mongoose";
 
 export interface IMovie extends mongoose.Document {
-  _id: string;
-  __v: number;
-  cinemaName: string;
-  cinemaUrl: string;
-  created_at: string;
-  dateText: string;
-  movieUrl: string;
+  cinemaName?: string;
+  cinemaUrl?: string;
+  dateText?: string;
+  movieUrl?: string;
+  tmdbData?: TMDBMovieType;
+  id?: number;
   title: string;
 }
 
 const MovieSchema = new mongoose.Schema({
-  cinemaName: { type: String, required: true },
-  cinemaUrl: { type: String, required: true },
-  created_at: { type: String, required: true },
-  dateText: { type: String, required: true },
-  movieUrl: { type: String, required: true },
   title: { type: String, required: true },
+  cinemaName: { type: String },
+  cinemaUrl: { type: String },
+  dateText: { type: String },
+  movieUrl: { type: String },
+  tmdbData: { type: Object },
+  id: { type: Number },
 });
 
 export default mongoose.models.Movie ||

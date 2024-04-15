@@ -9,7 +9,7 @@ import { useEffect, useState } from "react";
 import { useAuth } from "@clerk/nextjs";
 import { fetchMongoDBUser } from "@/fetchData/fetchMongoDBUser";
 import { cn } from "@/lib/utils";
-import MovieSuggestionItems from "./movieSuggestionItems";
+import MovieSuggestions from "./movieSuggestions";
 import { TMDBMovieType } from "@/lib/baseTypes";
 
 const formSchema = z.object({
@@ -63,7 +63,7 @@ const Watchlist = () => {
 
   useEffect(() => {
     if (userId) {
-      fetchWatchlist(userId);
+      // fetchWatchlist(userId);
     }
   }, [userId]);
 
@@ -177,7 +177,7 @@ const Watchlist = () => {
           </div>
         </div>
         <div className="basis-9/12 lg:col-span-2 grid gap-8 lg:grid-cols-3 auto-rows-auto">
-          <MovieSuggestionItems
+          <MovieSuggestions
             movieSuggestions={movieSuggestions}
             loading={loadingQuery}
           />

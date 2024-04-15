@@ -2,7 +2,7 @@ import mongoose from "mongoose";
 
 export interface UserProps extends mongoose.Document {
   id: string;
-  watchlist?: number[];
+  watchlist?: { id: number[]; date_added: Date; title: string }[];
 }
 
 const UserSchema = new mongoose.Schema({
@@ -14,7 +14,7 @@ const UserSchema = new mongoose.Schema({
   email: { type: String },
   password: { type: String },
   role: { type: String },
-  watchlist: { type: [Number] },
+  watchlist: { type: Array },
 });
 
 export default mongoose.models.User ||
