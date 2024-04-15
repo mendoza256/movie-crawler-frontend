@@ -3,6 +3,7 @@ import { NextApiResponse } from "next";
 import { NextResponse } from "next/server";
 import { currentUser } from "@clerk/nextjs";
 import Movie from "@/models/Movie";
+import dbConnect from "@/lib/mongoose";
 
 export async function POST(req: Request, res: NextApiResponse) {
   try {
@@ -14,26 +15,43 @@ export async function POST(req: Request, res: NextApiResponse) {
       return NextResponse.json({ success: false });
     }
 
-    const movieIsInDatabase = await Movie.findOne({ id: movie.id });
-    if (!movieIsInDatabase) {
-      await Movie.create(movie);
+    await dbConnect();
+    console.log("movie", movie.title);
+    try {
+      const foundMovie = await Movie.findOne({ id: movie.id });
+      if (!foundMovie) {
+        console.log("Movie not in DB");
+        const newMovie = new Movie({
+          tmdbData: movie,
+          id: movie.id,
+          title: movie.title,
+        });
+        console.log("Saving movie");
+        await newMovie.save();
+      } else {
+        console.log("Movie already in DB");
+      }
+    } catch (error) {
+      console.error("Error saving movie", error);
     }
 
-    const movieIsOnWatchlist = await User.findOne({
-      id: user.id,
-      watchlist: movie.id,
-    });
-    if (movieIsOnWatchlist) {
-      return NextResponse.json({ success: false });
-    }
+    const newMovieItem = {
+      id: movie.id,
+      date_added: new Date(),
+      title: movie.title,
+    };
 
-    const updatedUser = await User.findOneAndUpdate(
-      { id: user.id },
-      { $push: { watchlist: movie.id } },
-      { new: true }
-    );
-    return NextResponse.json({ success: true, data: updatedUser });
+    try {
+      const updatedUser = await User.findOneAndUpdate(
+        { id: user.id },
+        { $push: { watchlist: newMovieItem } },
+        { new: true }
+      );
+      return NextResponse.json({ success: true, data: updatedUser });
+    } catch (error) {
+      return NextResponse.json({ success: false, error });
+    }
   } catch (error) {
-    return NextResponse.json({ success: false });
+    return NextResponse.json({ success: false, error });
   }
 }
