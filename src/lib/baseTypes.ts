@@ -16,6 +16,13 @@ export type TMDBMovieType = {
   vote_average: number;
 };
 
+export type WatchlistMovieType = {
+  title: string;
+  date_added: string;
+  id: number;
+  tmdbData: TMDBMovieType;
+};
+
 // export type UserType = {
 //   id: string;
 //   username: string;

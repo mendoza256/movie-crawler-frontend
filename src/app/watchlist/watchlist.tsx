@@ -1,38 +1,26 @@
-import { TMDBMovieType } from "@/lib/baseTypes";
-import { useUser } from "@clerk/nextjs";
+import { WatchlistMovieType } from "@/lib/baseTypes";
+import { shortenMovieOverview } from "@/lib/utils";
 import Image from "next/image";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 
-interface MovieSuggestionsProps {
-  movieSuggestions: TMDBMovieType[];
+interface WatchlistProps {
+  watchlist: WatchlistMovieType[];
   loading: boolean;
 }
 
-const MovieSuggestions = ({
-  movieSuggestions,
-  loading,
-}: MovieSuggestionsProps) => {
+const Watchlist = ({ watchlist, loading }: WatchlistProps) => {
   const [posting, setPosting] = useState(false);
-  const [watchlist, setWatchlist] = useState<string[]>([]);
   const skeletonAmount = 10;
-  const filteredSuggestions = movieSuggestions.filter(
-    (movie) => movie.poster_path !== null && movie.release_date !== ""
-  );
-  const { user } = useUser();
 
-  console.log("user", user?.id);
-
-  // TODO get user watchlist
-
-  async function addToWatchlist(
+  async function removeFromWatchlist(
     e: React.MouseEvent<HTMLButtonElement>,
-    movie: TMDBMovieType
+    movie: WatchlistMovieType
   ) {
     setPosting(true);
     e.preventDefault();
     try {
       await fetch("/api/user/watchlist", {
-        method: "POST",
+        method: "DELETE",
         headers: {
           "Content-Type": "application/json",
         },
@@ -46,23 +34,10 @@ const MovieSuggestions = ({
     }
   }
 
-  function shortenMovieOverview(string: string, maxLength: number) {
-    if (string.length > maxLength) {
-      const shortened = string.slice(0, maxLength);
-      return (
-        shortened.slice(
-          0,
-          Math.min(shortened.length, shortened.lastIndexOf(" "))
-        ) + "..."
-      );
-    }
-    return string;
-  }
-
   return (
     <>
       {!loading &&
-        filteredSuggestions.map((movie) => (
+        watchlist.map((movie) => (
           <div
             key={movie.id}
             className="card shadow-xl image-full before:content-none hover:before:content-[''] transition-all duration-300 ease-in-out"
@@ -71,24 +46,24 @@ const MovieSuggestions = ({
               <Image
                 width={500}
                 height={750}
-                src={`https://image.tmdb.org/t/p/w500${movie.poster_path}`}
+                src={`https://image.tmdb.org/t/p/w500${movie.tmdbData.poster_path}`}
                 alt={movie.title}
               />
             </figure>
             <div className="card-body shrink lg:opacity-0 hover:opacity-100 transition-all duration-300 ease-in-out">
               <h3 className="card-title">
-                {movie.title} ({movie.release_date.split("-")[0]})
+                {movie.title} ({movie.tmdbData.release_date.split("-")[0]})
               </h3>
-              <p>{shortenMovieOverview(movie.overview, 250)}</p>
+              <p>{shortenMovieOverview(movie.tmdbData.overview, 250)}</p>
               <div className="card-actions justify-end">
                 <button
-                  onClick={(e) => addToWatchlist(e, movie)}
+                  onClick={(e) => removeFromWatchlist(e, movie)}
                   className="btn btn-primary min-w-12"
                 >
                   {posting ? (
                     <span className="loading loading-spinner loading-lg"></span>
                   ) : (
-                    "Add to Watchlist"
+                    "Remove from Watchlist"
                   )}
                 </button>
               </div>
@@ -103,4 +78,4 @@ const MovieSuggestions = ({
   );
 };
 
-export default MovieSuggestions;
+export default Watchlist;
