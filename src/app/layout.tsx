@@ -30,6 +30,11 @@ export default function RootLayout({
             <>
               <Navbar />
               {children}
+              <div className="toast">
+                <div className="alert alert-info">
+                  <span>Your movie is showing near you!</span>
+                </div>
+              </div>
             </>
           </ThemeProvider>
         </body>
