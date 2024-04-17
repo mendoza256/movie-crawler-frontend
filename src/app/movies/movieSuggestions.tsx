@@ -42,6 +42,9 @@ const MovieSuggestions = ({
     }
   }
 
+  // TODO send user notification if movie on watchlist is in database and was added in the past 7 days
+  // TODO when crawling, check if movie was watchlisted by user and if so, send user notification
+
   async function removeFromWatchlist(
     e: React.MouseEvent<HTMLButtonElement>,
     movie: TMDBMovieType
