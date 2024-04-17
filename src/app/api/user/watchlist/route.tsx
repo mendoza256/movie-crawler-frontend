@@ -39,12 +39,40 @@ export async function POST(req: Request, res: NextApiResponse) {
       id: movie.id,
       date_added: new Date(),
       title: movie.title,
+      tmdbData: movie,
     };
 
     try {
       const updatedUser = await User.findOneAndUpdate(
         { id: user.id },
         { $push: { watchlist: newMovieItem } },
+        { new: true }
+      );
+      return NextResponse.json({ success: true, data: updatedUser });
+    } catch (error) {
+      return NextResponse.json({ success: false, error });
+    }
+  } catch (error) {
+    return NextResponse.json({ success: false, error });
+  }
+}
+
+export async function DELETE(req: Request, res: NextResponse) {
+  try {
+    const body = await req.json();
+    const { movie } = body;
+    const user = await currentUser();
+
+    if (!user || !user?.id || movie === undefined) {
+      return NextResponse.json({ success: false });
+    }
+
+    await dbConnect();
+
+    try {
+      const updatedUser = await User.findOneAndUpdate(
+        { id: user.id },
+        { $pull: { watchlist: { id: movie.id } } },
         { new: true }
       );
       return NextResponse.json({ success: true, data: updatedUser });

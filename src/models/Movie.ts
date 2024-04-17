@@ -2,13 +2,13 @@ import { TMDBMovieType } from "@/lib/baseTypes";
 import mongoose from "mongoose";
 
 export interface IMovie extends mongoose.Document {
+  title: string;
   cinemaName?: string;
   cinemaUrl?: string;
   dateText?: string;
   movieUrl?: string;
   tmdbData?: TMDBMovieType;
   id?: number;
-  title: string;
 }
 
 const MovieSchema = new mongoose.Schema({
