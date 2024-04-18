@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { UserButton } from "@clerk/nextjs";
+import Notifications from "./Notifications";
 
 const Navbar = () => {
   return (
@@ -12,7 +13,7 @@ const Navbar = () => {
         </div>
         <div className="">
           <Link className="text-lg" href="/movies">
-            Movies
+            Track Movies
           </Link>
         </div>
         <div className="flex-1">
@@ -21,13 +22,16 @@ const Navbar = () => {
           </Link>
         </div>
         <div className="flex-none gap-4">
-          <div className="form-control">
+          {/* <div className="form-control">
             <input
               type="text"
               placeholder="Search"
               className="input input-bordered w-24 md:w-auto"
             />
-          </div>
+          </div> */}
+
+          <Notifications />
+
           <div className="dropdown dropdown-end">
             <div
               tabIndex={0}
