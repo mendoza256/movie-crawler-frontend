@@ -2,31 +2,32 @@ import Image from "next/image";
 import NotificationBell from "../../../public/icons/notifications-outline.svg";
 import { useUser } from "@clerk/nextjs";
 import { useEffect, useState } from "react";
+import { MovieNotificationType } from "@/lib/baseTypes";
+import Link from "next/link";
 
 const Notifications = () => {
   const { user } = useUser();
-  const [notifications, setNotifications] = useState([]);
+  const [notifications, setNotifications] = useState<MovieNotificationType[]>(
+    []
+  );
 
   async function getNotifications() {
-    const notifications = await fetch("/api/notifications", {
+    const data = await fetch("/api/notifications", {
       method: "GET",
       headers: {
         "Content-Type": "application/json",
       },
       cache: "no-cache",
     });
-    return notifications;
+    const notifications = await data.json();
+    setNotifications(notifications?.data as unknown as MovieNotificationType[]);
   }
+
+  console.log("notifications", notifications);
 
   useEffect(() => {
     if (user) {
-      getNotifications()
-        .then((res) => res.json())
-        .then((data) => {
-          if (data.success) {
-            setNotifications(data.data);
-          }
-        });
+      getNotifications();
     }
   }, [user]);
 
@@ -47,12 +48,16 @@ const Notifications = () => {
         tabIndex={0}
         className="dropdown-content z-[1] card card-compact w-72 p-2 shadow bg-primary text-primary-content"
       >
-        {notifications.map((n, i) => (
+        {notifications?.map((n, i) => (
           <div key={i} className="card-body">
-            <h4 className="card-title">Movie found in cinema!</h4>
-            <p>
-              <b>{n.title}</b> is playing in a theater near you.
-            </p>
+            <h4 className="card-title">{n.title}</h4>
+            <p dangerouslySetInnerHTML={{ __html: n.message }} />
+            <Link href={n.movieLink} target="_blank" rel="noopener noreferrer">
+              See Movie
+            </Link>
+            <Link href={n.cinemaLink} target="_blank" rel="noopener noreferrer">
+              See Cinema
+            </Link>
           </div>
         ))}
       </div>

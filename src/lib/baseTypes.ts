@@ -23,6 +23,13 @@ export type WatchlistMovieType = {
   tmdbData: TMDBMovieType;
 };
 
+export type MovieNotificationType = {
+  title: string;
+  message: string;
+  movieLink: string;
+  cinemaLink: string;
+};
+
 // export type UserType = {
 //   id: string;
 //   username: string;
