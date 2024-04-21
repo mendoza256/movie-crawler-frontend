@@ -20,7 +20,7 @@ export default function RootLayout({
   return (
     <ClerkProvider>
       <html lang="en">
-        <body className={`${inter.className} pt-[58px] min-h-screen`}>
+        <body className={`${inter.className} pt-[82.25px] min-h-screen`}>
           <ThemeProvider
             attribute="class"
             defaultTheme="system"
@@ -30,11 +30,6 @@ export default function RootLayout({
             <>
               <Navbar />
               {children}
-              <div className="toast">
-                <div className="alert alert-info">
-                  <span>Your movie is showing near you!</span>
-                </div>
-              </div>
             </>
           </ThemeProvider>
         </body>

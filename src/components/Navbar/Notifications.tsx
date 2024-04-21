@@ -23,8 +23,6 @@ const Notifications = () => {
     setNotifications(notifications?.data as unknown as MovieNotificationType[]);
   }
 
-  console.log("notifications", notifications);
-
   useEffect(() => {
     if (user) {
       getNotifications();
