@@ -1,28 +1,36 @@
-"use client";
+import MovieSuggestions from "@/app/movies/movieSuggestions";
+import { MovieType, TMDBMovieType, WatchlistMovieType } from "@/lib/baseTypes";
 
-import useFetchData from "@/fetchData/fetchData";
-import { useSearchParams } from "next/navigation";
-import Loading from "./Skeleton";
-import MovieItem from "./MovieItem";
-import PaginationComponent from "./PaginationComponent";
-import { MovieType } from "@/lib/baseTypes";
+async function fetchMovies() {
+  try {
+    const res = await fetch(
+      `https://api.themoviedb.org/3/movie/upcoming?api_key=${process.env.TMDB_API_KEY_AUTH}&language=en-US&page=1`
+    );
+    return res.json();
+  } catch (error) {
+    console.error("Failed to fetch movies. Please try again.");
+  }
+}
 
-const MovieList = () => {
-  const searchParams = useSearchParams();
-  const page = searchParams.get("page") || "1";
-  const { data, loading, error } = useFetchData(
-    `${process.env.FRONTEND_BASE_URL}/api/movies`,
-    page
-  );
-
-  const movies = data as MovieType[];
+const MovieList = async () => {
+  const movies = await fetchMovies();
 
   return (
-    <div>
-      {error && <span className="text-red-600">{error}</span>}
-      {loading && <Loading />}
-      {movies && movies?.map((movie, i) => <MovieItem key={i} movie={movie} />)}
-      <PaginationComponent data={data} page={page} />
+    <div className="basis-9/12 lg:col-span-2 grid gap-8 lg:grid-cols-4 auto-rows-auto">
+      {movies && (
+        <MovieSuggestions
+          movieSuggestions={movies.results}
+          loading={false}
+          watchlist={[
+            {
+              title: "",
+              date_added: "",
+              id: 0,
+              tmdbData: {} as TMDBMovieType,
+            } as WatchlistMovieType,
+          ]}
+        />
+      )}
     </div>
   );
 };

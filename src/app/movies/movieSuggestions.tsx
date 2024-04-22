@@ -1,3 +1,5 @@
+"use client";
+
 import { TMDBMovieType, WatchlistMovieType } from "@/lib/baseTypes";
 import { shortenMovieOverview } from "@/lib/utils";
 import Image from "next/image";
@@ -16,7 +18,7 @@ const MovieSuggestions = ({
 }: MovieSuggestionsProps) => {
   const [posting, setPosting] = useState(false);
   const skeletonAmount = 10;
-  const filteredSuggestions = movieSuggestions.filter(
+  const filteredSuggestions = movieSuggestions?.filter(
     (movie) => movie.poster_path !== null && movie.release_date !== ""
   );
 
@@ -41,9 +43,6 @@ const MovieSuggestions = ({
       setPosting(false);
     }
   }
-
-  // TODO send user notification if movie on watchlist is in database and was added in the past 7 days
-  // TODO when crawling, check if movie was watchlisted by user and if so, send user notification
 
   async function removeFromWatchlist(
     e: React.MouseEvent<HTMLButtonElement>,
@@ -70,6 +69,7 @@ const MovieSuggestions = ({
   return (
     <>
       {!loading &&
+        filteredSuggestions &&
         filteredSuggestions.map((movie) => {
           const isWatchlisted = watchlist.some(
             (watchlistMovie) => watchlistMovie.id === movie.id

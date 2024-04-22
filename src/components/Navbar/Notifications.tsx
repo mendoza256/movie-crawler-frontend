@@ -10,6 +10,7 @@ const Notifications = () => {
   const [notifications, setNotifications] = useState<MovieNotificationType[]>(
     []
   );
+  const hasNotifications = notifications.length > 0;
 
   async function getNotifications() {
     const data = await fetch("/api/notifications", {
@@ -22,8 +23,6 @@ const Notifications = () => {
     const notifications = await data.json();
     setNotifications(notifications?.data as unknown as MovieNotificationType[]);
   }
-
-  console.log("notifications", notifications);
 
   useEffect(() => {
     if (user) {
@@ -42,25 +41,37 @@ const Notifications = () => {
           alt="Notification Bell"
         />
 
-        <div className="badge badge-sm badge-danger absolute bottom-0 right-0 bg-red-600 aspect-square"></div>
+        {hasNotifications && (
+          <div className="badge badge-sm badge-danger absolute bottom-0 right-0 bg-red-600 aspect-square"></div>
+        )}
       </div>
-      <div
-        tabIndex={0}
-        className="dropdown-content z-[1] card card-compact w-72 p-2 shadow bg-primary text-primary-content"
-      >
-        {notifications?.map((n, i) => (
-          <div key={i} className="card-body">
-            <h4 className="card-title">{n.title}</h4>
-            <p dangerouslySetInnerHTML={{ __html: n.message }} />
-            <Link href={n.movieLink} target="_blank" rel="noopener noreferrer">
-              See Movie
-            </Link>
-            <Link href={n.cinemaLink} target="_blank" rel="noopener noreferrer">
-              See Cinema
-            </Link>
-          </div>
-        ))}
-      </div>
+      {hasNotifications && (
+        <div
+          tabIndex={0}
+          className="dropdown-content z-[1] card card-compact w-72 p-2 shadow bg-primary text-primary-content"
+        >
+          {notifications?.map((n, i) => (
+            <div key={i} className="card-body">
+              <h4 className="card-title">{n.title}</h4>
+              <p dangerouslySetInnerHTML={{ __html: n.message }} />
+              <Link
+                href={n.movieLink}
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                See Movie
+              </Link>
+              <Link
+                href={n.cinemaLink}
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                See Cinema
+              </Link>
+            </div>
+          ))}
+        </div>
+      )}
     </div>
   );
 };
