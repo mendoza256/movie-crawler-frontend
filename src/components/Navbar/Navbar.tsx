@@ -4,7 +4,7 @@ import Notifications from "./Notifications";
 
 const Navbar = () => {
   return (
-    <div className="bg-base-100 fixed top-0 left-0 right-0 z-20 shadow-md">
+    <div className="bg-base-100 fixed top-0 left-0 right-0 z-30 shadow-md">
       <nav className="navbar px-8 py-4 container gap-6">
         <div className="">
           <Link className="btn text-xl" href="/">
@@ -22,6 +22,7 @@ const Navbar = () => {
           </Link>
         </div>
         <div className="flex-none gap-4">
+          {/* // TODO add search in Navbar */}
           {/* <div className="form-control">
             <input
               type="text"
