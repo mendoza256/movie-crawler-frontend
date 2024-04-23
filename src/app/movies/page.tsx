@@ -123,11 +123,11 @@ const Movies = () => {
                 name="movieTitle"
                 render={({ field }) => (
                   <div className="form-control">
-                    <label className="label">Movie Name</label>
+                    <label className="label">Search movies to track here</label>
                     <input
                       className="input w-full"
                       type="text"
-                      placeholder="Title"
+                      placeholder="Movie title"
                       {...field}
                     />
                     <FormMessage />

@@ -48,27 +48,37 @@ const Notifications = () => {
       {hasNotifications && (
         <div
           tabIndex={0}
-          className="dropdown-content z-[1] card card-compact w-72 p-2 shadow bg-primary text-primary-content"
+          className="dropdown-content z-[1] card card-compact w-72 p-2 shadow bg-primary text-primary-content mt-2"
         >
           {notifications?.map((n, i) => (
-            <div key={i} className="card-body">
-              <h4 className="card-title">{n.title}</h4>
-              <p dangerouslySetInnerHTML={{ __html: n.message }} />
-              <Link
-                href={n.movieLink}
-                target="_blank"
-                rel="noopener noreferrer"
-              >
-                See Movie
-              </Link>
-              <Link
-                href={n.cinemaLink}
-                target="_blank"
-                rel="noopener noreferrer"
-              >
-                See Cinema
-              </Link>
-            </div>
+            <>
+              <div key={i} className="card-body">
+                <h6 className="card-title text-sm">{n.title}</h6>
+                <p
+                  className="text-xs"
+                  dangerouslySetInnerHTML={{ __html: n.message }}
+                />
+                <Link
+                  className="text-xs"
+                  href={n.movieLink}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                >
+                  See Movie
+                </Link>
+                <Link
+                  className="text-xs"
+                  href={n.cinemaLink}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                >
+                  See Cinema
+                </Link>
+              </div>
+              {i + 1 === notifications.length ? null : (
+                <div className="divider m-0"></div>
+              )}
+            </>
           ))}
         </div>
       )}

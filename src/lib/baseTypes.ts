@@ -22,6 +22,7 @@ export type WatchlistMovieType = {
   date_added: string;
   id: number;
   tmdbData: TMDBMovieType;
+  sent_email: boolean;
 };
 
 export type MovieNotificationType = {

@@ -40,6 +40,7 @@ export async function POST(req: Request, res: NextApiResponse) {
       date_added: new Date(),
       title: movie.title,
       tmdbData: movie,
+      sent_email: false,
     };
 
     try {
