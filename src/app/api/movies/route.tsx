@@ -5,6 +5,7 @@ import { NextRequest, NextResponse } from "next/server";
 
 export async function GET(req: NextRequest, res: NextResponse) {
   if (typeof req.url === "undefined") {
+    console.log("invalid req");
     return NextResponse.json({ error: "Invalid request" });
   }
 
@@ -12,7 +13,7 @@ export async function GET(req: NextRequest, res: NextResponse) {
 
   const searchParams = new URL(req.url, "http://localhost").searchParams;
   const page = Number(searchParams.get("page")) || 1;
-  const limit = Number(searchParams.get("limit")) || 10; // default limit to 10 documents per page
+  const limit = Number(searchParams.get("limit")) || 20; // default limit to 10 documents per page
 
   const skip = (page - 1) * limit;
 

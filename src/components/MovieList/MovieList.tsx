@@ -1,25 +1,38 @@
 import MovieSuggestions from "@/app/movies/movieSuggestions";
-import { MovieType, TMDBMovieType, WatchlistMovieType } from "@/lib/baseTypes";
+import {
+  DbMovieType,
+  TMDBMovieType,
+  WatchlistMovieType,
+} from "@/lib/baseTypes";
 
 async function fetchMovies() {
   try {
-    const res = await fetch(
-      `https://api.themoviedb.org/3/movie/upcoming?api_key=${process.env.TMDB_API_KEY_AUTH}&language=en-US&page=1`
-    );
+    const res = await fetch(`http:localhost:3000/api/movies`, {
+      method: "GET",
+    });
+    if (!res.ok) {
+      throw new Error(`HTTP error! status: ${res.status}`);
+    }
     return res.json();
   } catch (error) {
     console.error("Failed to fetch movies. Please try again.");
+    console.error(error);
   }
 }
 
 const MovieList = async () => {
   const movies = await fetchMovies();
+  const filteredMovieData = movies?.data?.map((movie: DbMovieType) => {
+    return {
+      ...movie.tmdbData,
+    };
+  });
 
   return (
     <div className="basis-9/12 lg:col-span-2 grid gap-8 lg:grid-cols-4 auto-rows-auto">
       {movies && (
         <MovieSuggestions
-          movieSuggestions={movies.results}
+          movieSuggestions={filteredMovieData}
           loading={false}
           watchlist={[
             {

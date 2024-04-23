@@ -1,8 +1,9 @@
-export type MovieType = {
+export type DbMovieType = {
   title: string;
   cinemaName: string;
   cinemaUrl: string;
   movieUrl: string;
+  tmdbData: TMDBMovieType;
 };
 
 export type TMDBMovieType = {

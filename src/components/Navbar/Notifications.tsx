@@ -10,7 +10,7 @@ const Notifications = () => {
   const [notifications, setNotifications] = useState<MovieNotificationType[]>(
     []
   );
-  const hasNotifications = notifications.length > 0;
+  const hasNotifications = notifications?.length > 0;
 
   async function getNotifications() {
     const data = await fetch("/api/notifications", {

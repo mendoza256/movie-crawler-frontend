@@ -35,6 +35,7 @@ const Movies = () => {
       movieTitle: "",
     },
   });
+  const [hasSearched, setHasSearched] = useState(false);
 
   const fetchWatchlistMovies = async (userId: string) => {
     setIsLoading(true);
@@ -55,6 +56,7 @@ const Movies = () => {
 
   async function onSubmit(formData: z.infer<typeof formSchema>) {
     setIsLoadingQuery(true);
+    setHasSearched(true);
     try {
       const response = await fetch(`/api/tmdb?query=${formData.movieTitle}`, {
         method: "GET",
@@ -78,6 +80,33 @@ const Movies = () => {
       setIsLoadingQuery(false);
     }
   }
+
+  async function getTrendingMovies() {
+    setIsLoadingQuery(true);
+    try {
+      const res = await fetch(`/api/tmdb/trending`);
+
+      if (!res.ok) {
+        throw new Error(`Failed to look up movie: ${res.status}`);
+      }
+
+      const { success, data } = await res.json();
+
+      if (success) {
+        setMovieSuggestions(data.results);
+      }
+    } catch (error) {
+      setErrorMessage("Failed to add movie to watchlist. Please try again.");
+    } finally {
+      setIsLoadingQuery(false);
+    }
+  }
+
+  useEffect(() => {
+    if (!hasSearched) {
+      getTrendingMovies();
+    }
+  }, [hasSearched]);
 
   return (
     <section className="mt-10">
