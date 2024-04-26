@@ -1,10 +1,8 @@
-import { fetchMongoDBUser } from "@/fetchData/fetchMongoDBUser";
 import { WatchlistMovieType } from "@/lib/baseTypes";
 import dbConnect from "@/lib/mongoose";
 import Movie from "@/models/Movie";
 import User from "@/models/User";
 import { currentUser } from "@clerk/nextjs";
-import { mongo } from "mongoose";
 import { NextRequest, NextResponse } from "next/server";
 import { Resend } from "resend";
 
