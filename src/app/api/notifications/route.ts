@@ -1,6 +1,6 @@
 import { fetchMongoDBUser } from "@/fetchData/fetchMongoDBUser";
-import { WatchlistMovieType } from "@/lib/baseTypes";
-import dbConnect from "@/lib/mongoose";
+import { WatchlistMovieType } from "@/app/lib/baseTypes";
+import dbConnect from "@/app/lib/mongoose";
 import Movie from "@/models/Movie";
 import User from "@/models/User";
 import { currentUser } from "@clerk/nextjs";
@@ -39,16 +39,17 @@ export async function GET(req: NextRequest, res: NextResponse) {
 
       if (foundMovie && !movie.sent_email) {
         console.log("sending email");
-        resend.emails.send({
-          from: "onboarding@resend.dev",
-          to: "christian.graumann@gmail.com",
-          subject: `${foundMovie.title} is playing in a theater near you!`,
-          html: `<p>Hello ${
-            mongoUser.first_name || "moviemindr user"
-          }</p><p>Your tracked movie ${
-            foundMovie.title
-          } is playing in a theater near you. Log in to find out where can watch it on the big screen again!</p><p>Best,<br />moviemindr team</p>`,
-        });
+        // TODO replace with own email service
+        // resend.emails.send({
+        //   from: "onboarding@resend.dev",
+        //   to: "christian.graumann@gmail.com",
+        //   subject: `${foundMovie.title} is playing in a theater near you!`,
+        //   html: `<p>Hello ${
+        //     mongoUser.first_name || "moviemindr user"
+        //   }</p><p>Your tracked movie ${
+        //     foundMovie.title
+        //   } is playing in a theater near you. Log in to find out where can watch it on the big screen again!</p><p>Best,<br />moviemindr team</p>`,
+        // });
         movie.sent_email = true;
       }
       await mongoUser.save();

@@ -1,6 +1,7 @@
 import Link from "next/link";
-import { UserButton } from "@clerk/nextjs";
 import Notifications from "./Notifications";
+import UserIcon from "../../../public/icons/person-circle-outline.svg";
+import Image from "next/image";
 
 const Navbar = () => {
   return (
@@ -34,46 +35,14 @@ const Navbar = () => {
           <Notifications />
 
           <div className="dropdown dropdown-end">
-            <div
-              tabIndex={0}
-              role="button"
-              className="btn btn-ghost btn-circle"
-            >
-              <div className="avatar w-10 rounded-full grid place-items-center">
-                <UserButton
-                  appearance={{
-                    elements: {
-                      rootBox: {
-                        height: "100%",
-                        width: "100%",
-                      },
-                      userButtonBox: {
-                        height: "100%",
-                        width: "100%",
-                        padding: "0",
-                      },
-                      userButtonTrigger: {
-                        height: "100%",
-                        width: "100%",
-                        padding: "0",
-                      },
-                      avatarBox: {
-                        height: "100%",
-                        width: "100%",
-                      },
-                      open: {
-                        border: "none",
-                        boxShadow: "none",
-                        padding: "0",
-                      },
-                      userButtonPopoverCard: {
-                        top: 72,
-                      },
-                    },
-                  }}
-                />
-              </div>
-            </div>
+            <Link href="/profile" className="btn btn-ghost btn-circle">
+              <Image
+                src={UserIcon}
+                height={40}
+                width={40}
+                alt="Notification Bell"
+              />
+            </Link>
           </div>
         </div>
       </nav>

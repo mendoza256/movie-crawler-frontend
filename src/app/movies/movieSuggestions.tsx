@@ -1,7 +1,7 @@
 "use client";
 
-import { TMDBMovieType, WatchlistMovieType } from "@/lib/baseTypes";
-import { shortenMovieOverview } from "@/lib/utils";
+import { TMDBMovieType, WatchlistMovieType } from "@/app/lib/baseTypes";
+import { shortenMovieOverview } from "@/app/lib/utils";
 import Image from "next/image";
 import { useState } from "react";
 

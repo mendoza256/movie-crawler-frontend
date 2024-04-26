@@ -1,19 +1,38 @@
-import { authMiddleware } from "@clerk/nextjs";
+import { NextRequest, NextResponse } from "next/server";
+import { cookies } from "next/headers";
 
-// See https://clerk.com/docs/references/nextjs/auth-middleware
-// for more information about configuring your Middleware
-export default authMiddleware({
-  // Allow signed out users to access the specified routes:
-  publicRoutes: ["/api/webhooks(.*)", "/api/clerk", "/api/user", "/api/movies"],
-  // debug: true,
-});
+// 1. Specify protected and public routes
+const protectedRoutes = ["/dashboard"];
+const publicRoutes = ["/login", "/signup", "/"];
 
+export default async function middleware(req: NextRequest) {
+  // 2. Check if the current route is protected or public
+  const path = req.nextUrl.pathname;
+  const isProtectedRoute = protectedRoutes.includes(path);
+  const isPublicRoute = publicRoutes.includes(path);
+
+  // 3. Get the session from the cookie
+  const session: string | undefined = cookies().get("session")?.value;
+  const userId = session ? JSON.parse(session).userId : null;
+
+  // 5. Redirect to /login if the user is not authenticated
+  if (isProtectedRoute && !userId) {
+    return NextResponse.redirect(new URL("/login", req.nextUrl));
+  }
+
+  // 6. Redirect to /dashboard if the user is authenticated
+  if (
+    isPublicRoute &&
+    userId &&
+    !req.nextUrl.pathname.startsWith("/dashboard")
+  ) {
+    return NextResponse.redirect(new URL("/dashboard", req.nextUrl));
+  }
+
+  return NextResponse.next();
+}
+
+// Routes Middleware should not run on
 export const config = {
-  matcher: [
-    // Exclude files with a "." followed by an extension, which are typically static files.
-    // Exclude files in the _next directory, which are Next.js internals.
-    "/((?!.+\\.[\\w]+$|_next).*)",
-    // Re-include any files in the api or trpc folders that might have an extension
-    "/(api|trpc)(.*)",
-  ],
+  matcher: ["/((?!api|_next/static|_next/image|.*\\.png$).*)"],
 };

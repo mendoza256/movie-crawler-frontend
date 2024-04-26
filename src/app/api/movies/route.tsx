@@ -1,5 +1,5 @@
 /* eslint-disable import/no-anonymous-default-export */
-import dbConnect from "@/lib/mongoose";
+import dbConnect from "@/app/lib/mongoose";
 import Movie from "@/models/Movie";
 import { NextRequest, NextResponse } from "next/server";
 

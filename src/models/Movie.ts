@@ -1,4 +1,4 @@
-import { TMDBMovieType } from "@/lib/baseTypes";
+import { TMDBMovieType } from "@/app/lib/baseTypes";
 import mongoose from "mongoose";
 
 export interface IMovie extends mongoose.Document {

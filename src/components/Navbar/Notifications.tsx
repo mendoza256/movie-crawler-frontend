@@ -2,7 +2,7 @@ import Image from "next/image";
 import NotificationBell from "../../../public/icons/notifications-outline.svg";
 import { useUser } from "@clerk/nextjs";
 import { useEffect, useState } from "react";
-import { MovieNotificationType } from "@/lib/baseTypes";
+import { MovieNotificationType } from "@/app/lib/baseTypes";
 import Link from "next/link";
 
 const Notifications = () => {
@@ -32,7 +32,7 @@ const Notifications = () => {
 
   return (
     <div className="dropdown dropdown-bottom dropdown-end">
-      <div tabIndex={0} role="button" className="m-1">
+      <div tabIndex={0} role="button" className="btn btn-ghost btn-circle m-1">
         {/* // TODO Make white in dark mode */}
         <Image
           src={NotificationBell}
