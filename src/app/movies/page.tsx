@@ -2,8 +2,6 @@
 
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { FormProvider } from "react-hook-form";
-import { FormField, FormMessage } from "@/components/ui/form";
 import { useForm } from "react-hook-form";
 import { useEffect, useState } from "react";
 import { useAuth } from "@clerk/nextjs";
@@ -113,50 +111,43 @@ const Movies = () => {
       <div className="container flex gap-8">
         <div className="prose grow basis-3/12">
           <h2 className="mb-4">Movies</h2>
-          <FormProvider {...formMethods}>
-            <form
-              onSubmit={formMethods.handleSubmit(onSubmit)}
-              className="space-y-8 flex gap-4 items-end"
-            >
-              <FormField
-                control={formMethods.control}
+          <form
+            onSubmit={formMethods.handleSubmit(onSubmit)}
+            className="space-y-8 flex gap-4 items-end"
+          >
+            <div>
+              <label htmlFor="name">Search trackable movies here</label>
+              <input
+                type="text"
+                placeholder="Movie title"
+                className="input input-bordered w-full max-w-xs"
+                id="movieTitle"
                 name="movieTitle"
-                render={({ field }) => (
-                  <div className="form-control">
-                    <label className="label">Search movies to track here</label>
-                    <input
-                      className="input w-full"
-                      type="text"
-                      placeholder="Movie title"
-                      {...field}
-                    />
-                    <FormMessage />
-                  </div>
-                )}
               />
-              <button type="submit" className="btn mt-auto">
-                {isLoadingQuery ? (
-                  <span className="loading loading-spinner loading-lg"></span>
-                ) : (
-                  "Search"
-                )}
-              </button>
-              {errorMessage && <FormMessage>{errorMessage}</FormMessage>}
-            </form>
-
-            <div
-              role="alert"
-              className={cn(
-                "my-4 alert alert-success transition-opacity duration-500",
-                {
-                  "opacity-100": shouldShowMessage,
-                  "opacity-0": !shouldShowMessage,
-                }
-              )}
-            >
-              <span>{successMessage}</span>
+              {/* {state?.errors?.username && <p>{state.errors.username}</p>} */}
             </div>
-          </FormProvider>
+            <button type="submit" className="btn mt-auto">
+              {isLoadingQuery ? (
+                <span className="loading loading-spinner loading-lg"></span>
+              ) : (
+                "Search"
+              )}
+            </button>
+            {errorMessage && <FormMessage>{errorMessage}</FormMessage>}
+          </form>
+
+          <div
+            role="alert"
+            className={cn(
+              "my-4 alert alert-success transition-opacity duration-500",
+              {
+                "opacity-100": shouldShowMessage,
+                "opacity-0": !shouldShowMessage,
+              }
+            )}
+          >
+            <span>{successMessage}</span>
+          </div>
         </div>
         <div className="basis-9/12 lg:col-span-2 grid gap-8 lg:grid-cols-3 auto-rows-auto">
           <MovieSuggestions
