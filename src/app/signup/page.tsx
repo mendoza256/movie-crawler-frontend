@@ -1,45 +1,16 @@
 "use client";
 
 import { z } from "zod";
-import { zodResolver } from "@hookform/resolvers/zod";
-import { FormProvider } from "react-hook-form";
-import {
-  FormControl,
-  FormDescription,
-  FormField,
-  FormItem,
-  FormLabel,
-  FormMessage,
-} from "@/components/ui/form";
-import { Input } from "@/components/ui/input";
-import { useForm } from "react-hook-form";
-import { Button } from "@/components/ui/button";
-import { useState } from "react";
-import { userSchema } from "@/lib/zod";
-
-const formSchema = z.object(userSchema).refine(
-  (values) => {
-    return values.password === values.repeatPassword;
-  },
-  {
-    message: "Passwords must match!",
-    path: ["confirmPassword"],
-  }
-);
+import Link from "next/link";
+import { SignupFormSchema } from "@/lib/definitions";
+import { useFormState } from "react-dom";
+import { signup } from "../actions/auth";
+import { SignupButton } from "@/components/ui/SignupButton";
 
 const Signup = () => {
-  const [error, setError] = useState<string>("");
-  const form = useForm<z.infer<typeof formSchema>>({
-    resolver: zodResolver(formSchema),
-    defaultValues: {
-      username: "",
-      email: "",
-      password: "",
-      repeatPassword: "",
-    },
-  });
+  const [state, action] = useFormState(signup, undefined);
 
-  function onSubmit(values: z.infer<typeof formSchema>) {
+  function onSubmit(values: z.infer<typeof SignupFormSchema>) {
     fetch(process.env.BACKEND_BASE_URL + "/auth/register", {
       method: "POST",
       headers: {
@@ -67,67 +38,72 @@ const Signup = () => {
 
   return (
     <>
-      <div className="container max-w-80 mt-10">
-        <h1 className="mb-4 text-center text-xl">Sign Up Page</h1>
-        <FormProvider {...form}>
-          <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
-            <FormField
-              control={form.control}
+      <div className="container max-w-96 mt-10">
+        <h1 className="mb-4 text-center text-xl">Sign Up</h1>
+        <p className="mb-4">
+          Already have an account?{" "}
+          <Link href="/login" className="text-blue-500">
+            Login
+          </Link>
+        </p>
+        <form action={action} className="space-y-8">
+          <div>
+            <label htmlFor="name">Username</label>
+            <input
+              type="text"
+              placeholder="Username"
+              className="input input-bordered w-full max-w-xs"
+              id="username"
               name="username"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Username</FormLabel>
-                  <FormControl>
-                    <Input placeholder="Username" {...field} />
-                  </FormControl>
-                </FormItem>
-              )}
             />
-            <FormField
-              control={form.control}
+            {state?.errors?.username && <p>{state.errors.username}</p>}
+          </div>
+          <div>
+            <label htmlFor="email">E-Mail</label>
+            <input
+              type="email"
+              placeholder="E-Mail"
+              className="input input-bordered w-full max-w-xs"
+              id="email"
               name="email"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>E-Mail</FormLabel>
-                  <FormControl>
-                    <Input placeholder="E-Mail" {...field} />
-                  </FormControl>
-                </FormItem>
-              )}
             />
-            <FormField
-              control={form.control}
+            {state?.errors?.email && <p>{state.errors.email}</p>}
+          </div>
+          <div>
+            <label htmlFor="password">Password</label>
+            <input
+              type="password"
+              placeholder="Password"
+              className="input input-bordered w-full max-w-xs"
+              id="password"
               name="password"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Password</FormLabel>
-                  <FormControl>
-                    <Input placeholder="Password" {...field} />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
             />
-            <FormField
-              control={form.control}
+            {state?.errors?.password && (
+              <div>
+                <p>Password must:</p>
+                <ul>
+                  {state.errors.password.map((error) => (
+                    <li key={error}>- {error}</li>
+                  ))}
+                </ul>
+              </div>
+            )}
+          </div>
+          <div>
+            <label htmlFor="repeatPassword">Repeat Password</label>
+            <input
+              type="password"
+              placeholder="Repeat password"
+              className="input input-bordered w-full max-w-xs"
+              id="repeatPassword"
               name="repeatPassword"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Repeat Password</FormLabel>
-                  <FormControl>
-                    <Input placeholder="Repeat Password" {...field} />
-                  </FormControl>
-                  <FormDescription>
-                    Set your email and password.
-                  </FormDescription>
-                  <FormMessage />
-                </FormItem>
-              )}
             />
-            {error && <p className="text-red-500">{error}</p>}
-            <Button type="submit">Submit</Button>
-          </form>
-        </FormProvider>
+            {state?.errors?.repeatPassword && (
+              <p>{state.errors.repeatPassword}</p>
+            )}
+          </div>
+          <SignupButton />
+        </form>
       </div>
     </>
   );
