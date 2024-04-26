@@ -6,9 +6,9 @@ import { useForm } from "react-hook-form";
 import { useEffect, useState } from "react";
 import { useAuth } from "@clerk/nextjs";
 import { fetchMongoDBUser } from "@/fetchData/fetchMongoDBUser";
-import { cn } from "@/lib/utils";
+import { cn } from "@/app/lib/utils";
 import MovieSuggestions from "./movieSuggestions";
-import { TMDBMovieType, WatchlistMovieType } from "@/lib/baseTypes";
+import { TMDBMovieType, WatchlistMovieType } from "@/app/lib/baseTypes";
 
 const formSchema = z.object({
   movieTitle: z.string().min(4).max(50),
@@ -133,7 +133,6 @@ const Movies = () => {
                 "Search"
               )}
             </button>
-            {errorMessage && <FormMessage>{errorMessage}</FormMessage>}
           </form>
 
           <div

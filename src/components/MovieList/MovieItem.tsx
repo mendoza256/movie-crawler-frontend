@@ -1,6 +1,6 @@
 import Link from "next/link";
 import { Avatar, AvatarFallback } from "../ui/avatar";
-import { MovieType } from "@/lib/baseTypes";
+import { MovieType } from "@/app/lib/baseTypes";
 
 interface MovieItemProps {
   movie: MovieType;

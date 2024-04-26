@@ -1,6 +1,6 @@
 import { fetchMongoDBUser } from "@/fetchData/fetchMongoDBUser";
-import { WatchlistMovieType } from "@/lib/baseTypes";
-import dbConnect from "@/lib/mongoose";
+import { WatchlistMovieType } from "@/app/lib/baseTypes";
+import dbConnect from "@/app/lib/mongoose";
 import Movie from "@/models/Movie";
 import User from "@/models/User";
 import { currentUser } from "@clerk/nextjs";

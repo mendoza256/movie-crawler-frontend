@@ -3,7 +3,7 @@ import {
   DbMovieType,
   TMDBMovieType,
   WatchlistMovieType,
-} from "@/lib/baseTypes";
+} from "@/app/lib/baseTypes";
 
 async function fetchMovies() {
   try {

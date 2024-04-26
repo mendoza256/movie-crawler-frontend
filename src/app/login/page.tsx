@@ -1,11 +1,10 @@
 "use client";
-
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { FormProvider } from "react-hook-form";
 import { useForm } from "react-hook-form";
 import { useState } from "react";
-import { userSchema } from "@/lib/definitions";
+import { userSchema } from "@/app/lib/definitions";
 import Link from "next/link";
 
 const formSchema = z.object(userSchema).refine(

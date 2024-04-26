@@ -3,7 +3,7 @@
 import { useEffect, useState } from "react";
 import { useAuth } from "@clerk/nextjs";
 import { fetchMongoDBUser } from "@/fetchData/fetchMongoDBUser";
-import { WatchlistMovieType } from "@/lib/baseTypes";
+import { WatchlistMovieType } from "@/app/lib/baseTypes";
 import Watchlist from "./watchlist";
 
 const WatchlistPage = () => {

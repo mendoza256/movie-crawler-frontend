@@ -1,6 +1,9 @@
-import { SignupFormSchema, FormState } from "@/lib/definitions";
-import dbConnect from "@/lib/mongoose";
+import { SignupFormSchema, FormState } from "@/app/lib/definitions";
+import dbConnect from "@/app/lib/mongoose";
+import { createSession, deleteSession } from "@/app/lib/session";
 import User from "@/models/User";
+import * as bcrypt from "bcrypt";
+import { redirect } from "next/navigation";
 
 export async function signup(state: FormState, formData: FormData) {
   const validatedFields = SignupFormSchema.safeParse({
@@ -41,7 +44,11 @@ export async function signup(state: FormState, formData: FormData) {
     };
   }
 
-  // TODO:
-  // 4. Create user session
-  // 5. Redirect user
+  createSession(user.id);
+  redirect("/");
+}
+
+export async function logout() {
+  deleteSession();
+  redirect("/login");
 }

@@ -3,7 +3,7 @@ import { NextApiResponse } from "next";
 import { NextResponse } from "next/server";
 import { currentUser } from "@clerk/nextjs";
 import Movie from "@/models/Movie";
-import dbConnect from "@/lib/mongoose";
+import dbConnect from "@/app/lib/mongoose";
 
 export async function POST(req: Request, res: NextApiResponse) {
   try {
