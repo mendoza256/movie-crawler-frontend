@@ -1,3 +1,4 @@
+import "server-only";
 import { cookies } from "next/headers";
 import dbConnect from "./mongoose";
 import Session from "@/models/Session";

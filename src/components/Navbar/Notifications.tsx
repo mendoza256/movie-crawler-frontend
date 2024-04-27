@@ -1,12 +1,13 @@
+"use client";
+
 import Image from "next/image";
 import NotificationBell from "../../../public/icons/notifications-outline.svg";
-import { useUser } from "@clerk/nextjs";
 import { useEffect, useState } from "react";
 import { MovieNotificationType } from "@/app/lib/baseTypes";
 import Link from "next/link";
 
 const Notifications = () => {
-  const { user } = useUser();
+  const user = undefined;
   const [notifications, setNotifications] = useState<MovieNotificationType[]>(
     []
   );
