@@ -72,6 +72,13 @@ const config = {
         "accordion-down": "accordion-down 0.2s ease-out",
         "accordion-up": "accordion-up 0.2s ease-out",
       },
+      invert: {
+        25: ".25",
+        50: ".5",
+        75: ".75",
+        85: ".85",
+        90: ".9",
+      },
     },
   },
   plugins: [
