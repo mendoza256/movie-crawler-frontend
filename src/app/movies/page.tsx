@@ -15,7 +15,7 @@ const formSchema = z.object({
 });
 
 const Movies = () => {
-  const { userId } = useAuth();
+  const userId = undefined;
   const [watchlistMovies, setWatchlistMovies] = useState(
     [] as WatchlistMovieType[]
   );

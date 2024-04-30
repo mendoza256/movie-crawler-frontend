@@ -40,6 +40,7 @@ const Notifications = () => {
           height={40}
           width={40}
           alt="Notification Bell"
+          className="invert-90"
         />
 
         {hasNotifications && (
