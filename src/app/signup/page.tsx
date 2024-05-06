@@ -51,8 +51,8 @@ const Signup = () => {
           />
           {state?.errors?.password && (
             <div>
-              <p>Password must:</p>
-              <ul>
+              <p className="text-red-500">Password must:</p>
+              <ul className="text-red-500">
                 {state.errors.password.map((error) => (
                   <li key={error}>- {error}</li>
                 ))}
@@ -70,7 +70,7 @@ const Signup = () => {
             name="repeatPassword"
           />
           {state?.errors?.repeatPassword && (
-            <p>{state.errors.repeatPassword}</p>
+            <p className="text-red-500">{state.errors.repeatPassword}</p>
           )}
         </div>
         <SignupButton />

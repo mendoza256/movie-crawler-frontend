@@ -1,59 +1,10 @@
 "use client";
-import { z } from "zod";
-import { zodResolver } from "@hookform/resolvers/zod";
-import { FormProvider } from "react-hook-form";
-import { useForm } from "react-hook-form";
-import { useState } from "react";
-import { userSchema } from "@/app/lib/definitions";
+import { login } from "@/app/actions/auth";
 import Link from "next/link";
-
-const formSchema = z.object(userSchema).refine(
-  (values) => {
-    return values.password === values.repeatPassword;
-  },
-  {
-    message: "Passwords must match!",
-    path: ["confirmPassword"],
-  }
-);
+import { useFormState } from "react-dom";
 
 const Login = () => {
-  const [error, setError] = useState<string>("");
-  const form = useForm<z.infer<typeof formSchema>>({
-    resolver: zodResolver(formSchema),
-    defaultValues: {
-      username: "",
-      email: "",
-      password: "",
-      repeatPassword: "",
-    },
-  });
-
-  function onSubmit(values: z.infer<typeof formSchema>) {
-    fetch(process.env.BACKEND_BASE_URL + "/auth/register", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify(values),
-    })
-      .then((res) => {
-        if (res.status === 200) {
-          res.json().then((data) => {
-            console.log(data);
-          });
-          window.location.href = "/login";
-        }
-        if (res.status === 400) {
-          res.json().then((data) => {
-            setError(data.message);
-          });
-        }
-      })
-      .catch((err) => {
-        console.error("Error:", err);
-      });
-  }
+  const [state, action] = useFormState(login, undefined);
 
   return (
     <>
@@ -65,38 +16,41 @@ const Login = () => {
             Sign up here
           </Link>
         </p>
-        <FormProvider {...form}>
-          <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
-            <div>
-              <label className="pb-2" htmlFor="email">
-                E-Mail
-              </label>
-              <input
-                type="email"
-                placeholder="E-Mail"
-                className="input input-bordered w-full max-w-xs"
-                id="email"
-                name="email"
-              />
-            </div>
-            <div>
-              <label className="pb-2" htmlFor="password">
-                Password
-              </label>
-              <input
-                type="password"
-                placeholder="Password"
-                className="input input-bordered w-full max-w-xs"
-                id="password"
-                name="password"
-              />
-            </div>
-            <button className="btn" type="submit">
-              Sign Up
-            </button>
-            {error && <p className="text-red-500">{error}</p>}
-          </form>
-        </FormProvider>
+        <form action={action} className="space-y-8">
+          <div>
+            <label className="pb-2" htmlFor="email">
+              E-Mail
+            </label>
+            <input
+              type="email"
+              placeholder="E-Mail"
+              className="input input-bordered w-full max-w-xs"
+              id="email"
+              name="email"
+            />
+            {state?.errors?.email && (
+              <p className="text-red-500">{state.errors.email}</p>
+            )}
+          </div>
+          <div>
+            <label className="pb-2" htmlFor="password">
+              Password
+            </label>
+            <input
+              type="password"
+              placeholder="Password"
+              className="input input-bordered w-full max-w-xs"
+              id="password"
+              name="password"
+            />
+            {state?.errors?.password && (
+              <p className="text-red-500">{state.errors.password}</p>
+            )}
+          </div>
+          <button className="btn" type="submit">
+            Sign Up
+          </button>
+        </form>
       </div>
     </>
   );
