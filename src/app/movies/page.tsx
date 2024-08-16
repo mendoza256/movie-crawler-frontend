@@ -4,7 +4,6 @@ import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { useEffect, useState } from "react";
-import { useAuth } from "@clerk/nextjs";
 import { fetchMongoDBUser } from "@/fetchData/fetchMongoDBUser";
 import { cn } from "@/app/lib/utils";
 import MovieSuggestions from "./movieSuggestions";

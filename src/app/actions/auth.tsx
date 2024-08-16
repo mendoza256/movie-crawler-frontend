@@ -13,7 +13,7 @@ import { redirect } from "next/navigation";
 
 export async function signup(state: FormState, formData: FormData) {
   const validatedFields = SignupFormSchema.safeParse({
-    name: formData.get("name"),
+    username: formData.get("username"),
     email: formData.get("email"),
     password: formData.get("password"),
     repeatPassword: formData.get("repeatPassword"),
@@ -22,6 +22,10 @@ export async function signup(state: FormState, formData: FormData) {
   console.log("Validated fields", validatedFields);
 
   if (!validatedFields.success) {
+    console.log(
+      "Validation failed",
+      validatedFields.error.flatten().fieldErrors
+    );
     return {
       errors: validatedFields.error.flatten().fieldErrors,
     };
@@ -40,14 +44,17 @@ export async function signup(state: FormState, formData: FormData) {
 
   console.log("Creating user", username, email, hashedPassword);
 
-  // If the form is valid, create a new user
-  dbConnect();
-  const user = await User.create({
+  const newUser = new User({
     username: username,
     email: email,
     password: hashedPassword,
     watchlist: [],
+    id: Math.floor(Math.random() * 100000000),
   });
+
+  // If the form is valid, create a new user
+  await dbConnect();
+  const user = await User.create(newUser);
 
   if (!user) {
     return {
@@ -55,7 +62,7 @@ export async function signup(state: FormState, formData: FormData) {
     };
   }
 
-  console.log("User created successfully", user.id);
+  console.log("User created successfully", user.id ? user.id : "ERROR: no id");
 
   createSession(user.id);
   redirect("/");

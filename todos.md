@@ -1,7 +1,5 @@
 [ ] Replace clerk with own email/password based auth
 
-- [ ] add auth routes to nextjs
-- [ ] register route
 - [ ] login route
 - [ ] logout route
 - [ ] refresh session

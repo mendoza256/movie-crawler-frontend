@@ -1,17 +1,14 @@
-import { fetchMongoDBUser } from "@/fetchData/fetchMongoDBUser";
 import { WatchlistMovieType } from "@/app/lib/baseTypes";
 import dbConnect from "@/app/lib/mongoose";
 import Movie from "@/models/Movie";
 import User from "@/models/User";
 import { currentUser } from "@clerk/nextjs";
-import { mongo } from "mongoose";
 import { NextRequest, NextResponse } from "next/server";
 import { Resend } from "resend";
 
 export async function GET(req: NextRequest, res: NextResponse) {
   const user = await currentUser();
   const notifications = [];
-  const resend = new Resend(process.env.RESEND_API_KEY);
 
   if (!user || !user.id) {
     return NextResponse.json({ success: false });
