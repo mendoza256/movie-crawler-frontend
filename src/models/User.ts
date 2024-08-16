@@ -1,16 +1,19 @@
 import mongoose from "mongoose";
 
 export interface UserProps extends mongoose.Document {
-  id: string;
-  watchlist?: { id: number[]; date_added: Date; title: string }[];
+  email: string;
+  username: string;
+  password: string;
+  watchlist?: [];
+  id: number;
 }
 
 const UserSchema = new mongoose.Schema({
-  id: { type: String, required: true },
   email: { type: String },
   username: { type: String },
   password: { type: String },
   watchlist: { type: Array },
+  id: { type: Number },
 });
 
 export default mongoose.models.User ||

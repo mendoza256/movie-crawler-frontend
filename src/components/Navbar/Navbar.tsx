@@ -1,7 +1,6 @@
 import Link from "next/link";
 import Notifications from "./Notifications";
-import UserIcon from "../../../public/icons/person-circle-outline.svg";
-import Image from "next/image";
+import LoginBtn from "./LoginBtn";
 
 const Navbar = () => {
   return (
@@ -33,18 +32,7 @@ const Navbar = () => {
           </div> */}
 
           <Notifications />
-
-          <div className="dropdown dropdown-end">
-            <Link href="/profile" className="btn btn-ghost btn-circle">
-              <Image
-                src={UserIcon}
-                height={40}
-                width={40}
-                alt="Notification Bell"
-                className="invert-90"
-              />
-            </Link>
-          </div>
+          <LoginBtn />
         </div>
       </nav>
     </div>

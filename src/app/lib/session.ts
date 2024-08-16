@@ -27,6 +27,7 @@ export async function decrypt(session: string | undefined = "") {
 }
 
 export async function createSession(id: number) {
+  console.log("Creating session for user", id);
   const expiresAt = new Date(Date.now() + 7 * 24 * 60 * 60 * 1000);
 
   dbConnect();
@@ -34,6 +35,8 @@ export async function createSession(id: number) {
     userId: id,
     expiresAt,
   });
+
+  console.log("Created session", session);
 
   // 3. Store the session in cookies for optimistic auth checks
   cookies().set("session", JSON.stringify(session), {

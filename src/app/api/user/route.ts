@@ -1,5 +1,4 @@
 /* eslint-disable import/no-anonymous-default-export */
-import { NextApiRequest, NextApiResponse } from "next";
 import User from "@/models/User";
 import dbConnect from "@/app/lib/mongoose";
 import { NextRequest, NextResponse } from "next/server";
