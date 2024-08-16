@@ -72,6 +72,7 @@ export async function logout() {
   deleteSession();
   redirect("/login");
 }
+
 export async function login(state: FormState, formData: FormData) {
   const validatedFields = LoginFormSchema.safeParse({
     email: formData.get("email"),

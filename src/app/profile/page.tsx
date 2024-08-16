@@ -1,10 +1,13 @@
 import { cookies } from "next/headers";
-import { getUserId } from "../lib/session";
+import { redirect } from "next/navigation";
 
 const ProfilePage = () => {
-  const userId = getUserId();
-
-  console.log("userId", userId);
+  // if no session, redirect to login
+  const cookieStore = cookies();
+  const session = cookieStore.get("session");
+  if (!session) {
+    redirect("/login");
+  }
 
   return <div>Enter</div>;
 };

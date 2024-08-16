@@ -26,21 +26,42 @@ export async function decrypt(session: string | undefined = "") {
   }
 }
 
-export async function createSession(id: number) {
-  console.log("Creating session for user", id);
+export async function createSession(userId: string) {
   const expiresAt = new Date(Date.now() + 7 * 24 * 60 * 60 * 1000);
 
   dbConnect();
-  const session = await Session.create({
-    userId: id,
+  const dbSession = await Session.create({
+    userId,
     expiresAt,
   });
 
-  console.log("Created session", session);
+  const sessionId = dbSession._id;
 
-  // 3. Store the session in cookies for optimistic auth checks
-  cookies().set("session", JSON.stringify(session), {
+  const session = await encrypt({ sessionId, expiresAt });
+
+  cookies().set("session", session, {
+    httpOnly: true,
+    secure: true,
     expires: expiresAt,
+    sameSite: "lax",
+    path: "/",
+  });
+}
+
+export async function updateSession() {
+  const session = cookies().get("session")?.value;
+  const payload = await decrypt(session);
+
+  if (!session || !payload) {
+    return null;
+  }
+
+  const expires = new Date(Date.now() + 7 * 24 * 60 * 60 * 1000);
+  cookies().set("session", session, {
+    httpOnly: true,
+    secure: true,
+    expires: expires,
+    sameSite: "lax",
     path: "/",
   });
 }
