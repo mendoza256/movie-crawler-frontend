@@ -13,7 +13,7 @@ export default async function middleware(req: NextRequest) {
 
   // 3. Get the session from the cookie
   const session: string | undefined = cookies().get("session")?.value;
-  const userId = session ? JSON.parse(session).userId : null;
+  const userId = session ? session.userId : null;
 
   // 5. Redirect to /login if the user is not authenticated
   if (isProtectedRoute && !userId) {

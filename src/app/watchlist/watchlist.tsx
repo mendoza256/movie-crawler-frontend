@@ -6,7 +6,11 @@ import { fetchMongoDBUser } from "@/fetchData/fetchMongoDBUser";
 import Image from "next/image";
 import { useEffect, useState } from "react";
 
-const Watchlist = () => {
+interface WatchlistProps {
+  userId: string | null;
+}
+
+const Watchlist = ({ userId }: WatchlistProps) => {
   const [posting, setPosting] = useState(false);
   const skeletonAmount = 10;
 

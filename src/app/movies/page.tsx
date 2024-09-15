@@ -108,8 +108,8 @@ const Movies = () => {
   return (
     <section className="mt-10">
       <div className="container flex gap-8">
-        <div className="prose grow basis-3/12">
-          <h2 className="mb-4">Movies</h2>
+        <div className="grow basis-3/12">
+          <h2 className="text-2xl font-bold mb-4">Movies</h2>
           <form
             onSubmit={formMethods.handleSubmit(onSubmit)}
             className="space-y-8 flex gap-4 items-end"
