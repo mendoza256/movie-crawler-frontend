@@ -1,16 +1,37 @@
+"use client";
+
 import { WatchlistMovieType } from "@/app/lib/baseTypes";
 import { shortenMovieOverview } from "@/app/lib/utils";
+import { fetchMongoDBUser } from "@/fetchData/fetchMongoDBUser";
 import Image from "next/image";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
-interface WatchlistProps {
-  watchlist: WatchlistMovieType[];
-  loading: boolean;
-}
-
-const Watchlist = ({ watchlist, loading }: WatchlistProps) => {
+const Watchlist = () => {
   const [posting, setPosting] = useState(false);
   const skeletonAmount = 10;
+
+  const [watchlistMovies, setWatchlistMovies] = useState(
+    [] as WatchlistMovieType[]
+  );
+  const [errorMessage, setErrorMessage] = useState("");
+  const [isLoading, setIsLoading] = useState(false);
+
+  const fetchWatchlistMovies = async (userId: string) => {
+    setIsLoading(true);
+    try {
+      const { user } = await fetchMongoDBUser(userId);
+      setWatchlistMovies(user.watchlist);
+    } catch (error) {
+      setErrorMessage("Failed to fetch watchlist. Please try again.");
+    }
+    setIsLoading(false);
+  };
+
+  useEffect(() => {
+    if (userId) {
+      fetchWatchlistMovies(userId);
+    }
+  }, [userId]);
 
   async function removeFromWatchlist(
     e: React.MouseEvent<HTMLButtonElement>,
@@ -36,8 +57,9 @@ const Watchlist = ({ watchlist, loading }: WatchlistProps) => {
 
   return (
     <>
-      {!loading &&
-        watchlist.map((movie) => (
+      {!isLoading &&
+        watchlistMovies.length >= 1 &&
+        watchlistMovies.map((movie) => (
           <div
             key={movie.id}
             className="card shadow-xl image-full before:content-none hover:before:content-[''] transition-all duration-300 ease-in-out"
@@ -70,10 +92,11 @@ const Watchlist = ({ watchlist, loading }: WatchlistProps) => {
             </div>
           </div>
         ))}
-      {loading &&
+      {isLoading &&
         Array.from({ length: skeletonAmount }).map((_, index) => (
           <div key={index} className="skeleton w-full h-[423px]"></div>
         ))}
+      {errorMessage && <p className="text-red-500">{errorMessage}</p>}
     </>
   );
 };
