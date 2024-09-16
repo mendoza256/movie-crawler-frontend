@@ -90,4 +90,9 @@ div[class^="cl-internal-"] a {
 
 .card.image-full::before {
   content: none;
+  @apply rounded-md;
+}
+
+.card {
+  @apply rounded-md;
 }

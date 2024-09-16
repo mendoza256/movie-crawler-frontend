@@ -91,7 +91,7 @@ const MovieSuggestions = ({
                 <h3 className="card-title">
                   {movie.title} ({movie.release_date.split("-")[0]})
                 </h3>
-                <p>{shortenMovieOverview(movie.overview, 250)}</p>
+                <p>{shortenMovieOverview(movie.overview, 80)}</p>
                 <div className="card-actions justify-end">
                   {isWatchlisted ? (
                     <button
