@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { cookies } from "next/headers";
+import { decrypt } from "./app/lib/session";
 
 // 1. Specify protected and public routes
 const protectedRoutes = ["/dashboard", "/watchlist", "/profile"];
@@ -12,16 +13,21 @@ export default async function middleware(req: NextRequest) {
   const isPublicRoute = publicRoutes.includes(path);
 
   // 3. Get the session from the cookie
-  const session: string | undefined = cookies().get("session")?.value;
-  const userId = session ? session.userId : null;
+  const cookie = cookies().get("session")?.value;
+  // FIXME decrypt function not working
+  const session = await decrypt(cookie);
 
   // 5. Redirect to /login if the user is not authenticated
-  if (isProtectedRoute && !userId) {
+  if (isProtectedRoute && !session?.userId) {
     return NextResponse.redirect(new URL("/login", req.nextUrl));
   }
 
   // 6. Redirect to /dashboard if the user is authenticated
-  if (isPublicRoute && userId && !req.nextUrl.pathname.startsWith("/")) {
+  if (
+    isPublicRoute &&
+    session?.userId &&
+    !req.nextUrl.pathname.startsWith("/")
+  ) {
     return NextResponse.redirect(new URL("/", req.nextUrl));
   }
 

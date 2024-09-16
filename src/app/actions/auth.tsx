@@ -19,8 +19,6 @@ export async function signup(state: FormState, formData: FormData) {
     repeatPassword: formData.get("repeatPassword"),
   });
 
-  console.log("Validated fields", validatedFields);
-
   if (!validatedFields.success) {
     console.log(
       "Validation failed",
@@ -42,14 +40,13 @@ export async function signup(state: FormState, formData: FormData) {
   const { username, email, password } = validatedFields.data;
   const hashedPassword = await bcrypt.hash(password, 10);
 
-  console.log("Creating user", username, email, hashedPassword);
-
+  // TODO use something else then Math.random for the id?
   const newUser = new User({
     username: username,
     email: email,
     password: hashedPassword,
     watchlist: [],
-    id: Math.floor(Math.random() * 100000000),
+    id: Math.random().toString(36).substr(2, 9),
   });
 
   // If the form is valid, create a new user
@@ -61,8 +58,6 @@ export async function signup(state: FormState, formData: FormData) {
       message: "An error occurred while creating your account.",
     };
   }
-
-  console.log("User created successfully", user.id ? user.id : "ERROR: no id");
 
   createSession(user.id);
   redirect("/");

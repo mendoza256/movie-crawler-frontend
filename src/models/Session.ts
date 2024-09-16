@@ -1,9 +1,17 @@
-import mongoose from "mongoose";
+import mongoose, { Document, Model, Schema } from "mongoose";
 
-const SessionSchema = new mongoose.Schema({
-  userId: { type: Number, required: true },
-  expiresAt: { type: Date, required: true },
+export interface SessionProps extends Document {
+  userId: number;
+  expiresAt: Date;
+}
+
+const SessionSchema: Schema = new Schema({
+  userId: { type: Number, required: false },
+  expiresAt: { type: Date, required: false },
 });
 
-export default mongoose.models.Session ||
-  mongoose.model("Session", SessionSchema);
+const Session: Model<SessionProps> =
+  mongoose.models.Session ||
+  mongoose.model<SessionProps>("Session", SessionSchema);
+
+export default Session;
