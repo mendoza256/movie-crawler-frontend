@@ -147,7 +147,7 @@ const Movies = () => {
             <span>{successMessage}</span>
           </div>
         </div>
-        <div className="basis-9/12 lg:col-span-2 grid gap-8 lg:grid-cols-3 auto-rows-auto">
+        <div className="basis-9/12 lg:col-span-2 grid gap-8 lg:grid-cols-4 auto-rows-auto">
           <MovieSuggestions
             movieSuggestions={movieSuggestions}
             loading={isLoadingQuery}
