@@ -24,6 +24,8 @@ async function dbConnect() {
   if (!cached.promise) {
     const opts = {
       bufferCommands: true,
+      useNewUrlParser: true,
+      useUnifiedTopology: true,
     };
     cached.promise = mongoose.connect(MONGODB_URI, opts).then((mongoose) => {
       return mongoose;
@@ -35,8 +37,6 @@ async function dbConnect() {
     cached.promise = null;
     throw e;
   }
-
-  // console.log("Connected to MongoDB");
 
   return cached.conn;
 }
