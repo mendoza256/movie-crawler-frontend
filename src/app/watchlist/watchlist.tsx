@@ -13,7 +13,6 @@ interface WatchlistProps {
 const Watchlist = ({ userId }: WatchlistProps) => {
   const [posting, setPosting] = useState(false);
   const skeletonAmount = 10;
-
   const [watchlistMovies, setWatchlistMovies] = useState(
     [] as WatchlistMovieType[]
   );

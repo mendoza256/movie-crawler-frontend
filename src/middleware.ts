@@ -14,7 +14,6 @@ export default async function middleware(req: NextRequest) {
 
   // 3. Get the session from the cookie
   const cookie = cookies().get("session")?.value;
-  // FIXME decrypt function not working
   const session = await decrypt(cookie);
 
   // 5. Redirect to /login if the user is not authenticated

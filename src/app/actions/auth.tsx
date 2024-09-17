@@ -6,9 +6,10 @@ import {
   LoginFormSchema,
 } from "@/app/lib/definitions";
 import dbConnect from "@/app/lib/mongoose";
-import { createSession, deleteSession } from "@/app/lib/session";
+import { createSession, decrypt, deleteSession } from "@/app/lib/session";
 import User from "@/models/User";
 import * as bcrypt from "bcrypt";
+import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
 
 export async function signup(state: FormState, formData: FormData) {
@@ -105,4 +106,22 @@ export async function login(state: FormState, formData: FormData) {
 
   createSession(user.id);
   redirect("/");
+}
+
+export async function getUser() {
+  const cookie = cookies().get("session")?.value;
+  const session = await decrypt(cookie);
+
+  if (!session) {
+    return null;
+  }
+  const sessionString = await JSON.stringify(session);
+  const userId = decrypt(sessionString);
+
+  try {
+    const user = await User.findById(userId);
+    return user;
+  } catch {
+    return null;
+  }
 }

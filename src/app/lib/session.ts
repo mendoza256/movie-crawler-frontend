@@ -1,7 +1,5 @@
 import "server-only";
 import { cookies } from "next/headers";
-import dbConnect from "./mongoose";
-import Session from "@/models/Session";
 import { SignJWT, jwtVerify } from "jose";
 
 const secretKey = process.env.SESSION_SECRET;
@@ -11,35 +9,42 @@ export async function encrypt(payload: any) {
   return new SignJWT(payload)
     .setProtectedHeader({ alg: "HS256" })
     .setIssuedAt()
-    .setExpirationTime("7d")
+    .setExpirationTime("14d")
     .sign(encodedKey);
 }
 
 export async function decrypt(session: string | undefined = "") {
+  // FIXME check why decryption is not working
+  console.log("decrypt", session);
+  if (!session) {
+    console.log("No session provided");
+    return null;
+  }
+
   try {
     const { payload } = await jwtVerify(session, encodedKey, {
       algorithms: ["HS256"],
     });
     return payload;
   } catch (error) {
-    console.log("Failed to verify session");
+    console.error("Failed to verify session:", error);
+    return null;
   }
 }
 
 export async function createSession(userId: string) {
   const expiresAt = new Date(Date.now() + 7 * 24 * 60 * 60 * 1000);
 
-  dbConnect();
-  const dbSession = await Session.create({
-    userId,
-    expiresAt,
-  });
+  // TODO store session in db
+  // dbConnect();
+  // const dbSession = await Session.create({
+  //   userId,
+  //   expiresAt,
+  // });
 
-  const sessionId = dbSession._id;
+  // const sessionId = dbSession._id;
 
-  const session = await encrypt({ sessionId, expiresAt });
-
-  // TODO get this working
+  const session = await encrypt({ userId, expiresAt });
 
   cookies().set("session", session, {
     httpOnly: true,
