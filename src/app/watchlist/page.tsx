@@ -3,10 +3,11 @@ import { getUser } from "../actions/auth";
 
 const WatchlistPage = async () => {
   const user = await getUser();
+  const watchlist = user.watchlist;
+
+  console.log(user);
 
   if (!user) {
-    // Handle the case where the user is not found
-    // This shouldn't happen if your route protection is working correctly
     return <div>User not found</div>;
   }
 
@@ -15,7 +16,7 @@ const WatchlistPage = async () => {
       <div className="container flex gap-8 flex-col">
         <h2 className="text-2xl font-bold mb-4">Watchlist</h2>
         <div className="grid gap-8 lg:grid-cols-4 auto-rows-auto">
-          <Watchlist userId={user.id} />
+          <Watchlist watchlist={watchlist} />
         </div>
       </div>
     </section>
