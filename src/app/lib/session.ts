@@ -1,6 +1,7 @@
 import "server-only";
 import { cookies } from "next/headers";
 import { SignJWT, jwtVerify } from "jose";
+import { SessionProps } from "@/models/Session";
 
 const secretKey = process.env.SESSION_SECRET;
 const encodedKey = new TextEncoder().encode(secretKey);
@@ -13,19 +14,18 @@ export async function encrypt(payload: any) {
     .sign(encodedKey);
 }
 
-export async function decrypt(session: string | undefined = "") {
-  // FIXME check why decryption is not working
-  console.log("decrypt", session);
-  if (!session) {
-    console.log("No session provided");
+export async function decrypt(sessionToken: string | undefined = "") {
+  if (!sessionToken) {
+    console.log("No sessionToken provided");
     return null;
   }
 
   try {
-    const { payload } = await jwtVerify(session, encodedKey, {
-      algorithms: ["HS256"],
-    });
-    return payload;
+    const { payload } = await jwtVerify(
+      sessionToken,
+      new TextEncoder().encode(secretKey)
+    );
+    return payload as unknown as SessionProps;
   } catch (error) {
     console.error("Failed to verify session:", error);
     return null;
@@ -35,16 +35,9 @@ export async function decrypt(session: string | undefined = "") {
 export async function createSession(userId: string) {
   const expiresAt = new Date(Date.now() + 7 * 24 * 60 * 60 * 1000);
 
-  // TODO store session in db
-  // dbConnect();
-  // const dbSession = await Session.create({
-  //   userId,
-  //   expiresAt,
-  // });
-
-  // const sessionId = dbSession._id;
-
   const session = await encrypt({ userId, expiresAt });
+
+  // TODO: Save session to database
 
   cookies().set("session", session, {
     httpOnly: true,
@@ -76,3 +69,17 @@ export async function updateSession() {
 export function deleteSession() {
   cookies().delete("session");
 }
+
+// async function saveSessionToDatabase(
+//   userId: string,
+//   sessionToken: string,
+//   expiresAt: Date
+// ) {
+//   await dbConnect();
+//   await Session.create({
+//     userId,
+//     sessionToken,
+//     expiresAt,
+//     createdAt: new Date(),
+//   });
+// }

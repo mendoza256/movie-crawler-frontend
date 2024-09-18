@@ -104,7 +104,7 @@ export async function login(state: FormState, formData: FormData) {
     };
   }
 
-  createSession(user.id);
+  createSession(user._id);
   redirect("/");
 }
 
@@ -115,13 +115,15 @@ export async function getUser() {
   if (!session) {
     return null;
   }
-  const sessionString = await JSON.stringify(session);
-  const userId = decrypt(sessionString);
+
+  const userId = session.userId;
 
   try {
-    const user = await User.findById(userId);
-    return user;
-  } catch {
+    await dbConnect();
+    const userFromDb = await User.findById(userId);
+    return userFromDb;
+  } catch (error) {
+    console.error("Error fetching user:", error);
     return null;
   }
 }
