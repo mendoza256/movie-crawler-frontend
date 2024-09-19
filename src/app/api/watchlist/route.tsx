@@ -1,25 +1,23 @@
 import clientPromise from "@/app/lib/mongodb";
+import dbConnect from "@/app/lib/mongoose";
+import Movie from "@/models/Movie";
 import { NextRequest, NextResponse } from "next/server";
 
 export async function GET(req: NextRequest, res: NextResponse) {
-  if (typeof req.url === "undefined") {
+  const { searchParams } = new URL(req.url);
+  const movieId = searchParams.get("movieId");
+
+  if (!movieId) {
     return NextResponse.error();
   }
 
-  const searchParams = new URL(req.url).searchParams;
-  const movieTitle = searchParams.get("query") || "";
+  await dbConnect();
 
-  if (typeof movieTitle !== "undefined" && movieTitle?.length > 0) {
-    try {
-      const url = process.env.TMDB_BASE_URL + movieTitle;
-      const response = await fetch(url);
-      const data = await response.json();
-      return NextResponse.json({ success: true, data });
-    } catch (e) {
-      console.error(e);
-    }
-  } else {
-    return NextResponse.error();
+  try {
+    const movie = await Movie.findById(movieId);
+    return NextResponse.json({ success: true, data: movie });
+  } catch (e) {
+    console.error(e);
   }
 }
 

@@ -14,6 +14,7 @@ const formSchema = z.object({
 });
 
 const Movies = () => {
+  // TODO - add movies to watchlist
   const userId = undefined;
   const [watchlistMovies, setWatchlistMovies] = useState(
     [] as WatchlistMovieType[]

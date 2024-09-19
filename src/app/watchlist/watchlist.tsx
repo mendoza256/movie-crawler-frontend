@@ -1,15 +1,15 @@
 "use client";
 
-import { WatchlistMovieType } from "@/app/lib/baseTypes";
+import { DbMovieType, WatchlistMovieType } from "@/app/lib/baseTypes";
 import { shortenMovieOverview } from "@/app/lib/utils";
 import Image from "next/image";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 interface WatchlistProps {
-  watchlist: WatchlistMovieType[];
+  watchlistMovies: DbMovieType[];
 }
 
-const Watchlist = ({ watchlist }: WatchlistProps) => {
+const Watchlist = ({ watchlistMovies }: WatchlistProps) => {
   const [posting, setPosting] = useState(false);
 
   async function removeFromWatchlist(
@@ -36,8 +36,8 @@ const Watchlist = ({ watchlist }: WatchlistProps) => {
 
   return (
     <>
-      {watchlist.length >= 1 &&
-        watchlist.map((movie) => (
+      {watchlistMovies.length >= 1 &&
+        watchlistMovies.map((movie) => (
           <div
             key={movie.id}
             className="card shadow-xl image-full before:content-none hover:before:content-[''] transition-all duration-300 ease-in-out"
