@@ -4,7 +4,7 @@ export interface UserProps extends mongoose.Document {
   email: string;
   username: string;
   password: string;
-  watchlist?: [];
+  watchlist?: number[];
   id: number;
 }
 
