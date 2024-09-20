@@ -7,44 +7,37 @@ import { useEffect, useState } from "react";
 import { fetchMongoDBUser } from "@/fetchData/fetchMongoDBUser";
 import { cn } from "@/app/lib/utils";
 import MovieSuggestions from "./movieSuggestions";
-import { TMDBMovieType, WatchlistMovieType } from "@/app/lib/baseTypes";
+import { TMDBMovieType } from "@/app/lib/baseTypes";
+import { useMovies } from "@/hooks/useMovies";
 
 const formSchema = z.object({
   movieTitle: z.string().min(4).max(50),
 });
 
+type FormData = z.infer<typeof formSchema>;
+
 const Movies = () => {
   // TODO - add movies to watchlist
   const userId = undefined;
-  const [watchlistMovies, setWatchlistMovies] = useState(
-    [] as WatchlistMovieType[]
-  );
-  const [errorMessage, setErrorMessage] = useState("");
-  const [isLoading, setIsLoading] = useState(false);
+  const { watchlistMovies, isLoading, error } = useMovies(userId);
+
   const [isLoadingQuery, setIsLoadingQuery] = useState(false);
   const [successMessage, setSuccessMessage] = useState("");
   const [shouldShowMessage, setShouldShowMessage] = useState(false);
+  const [hasSearched, setHasSearched] = useState(false);
   const [movieSuggestions, setMovieSuggestions] = useState(
     [] as TMDBMovieType[]
   );
-  const formMethods = useForm<z.infer<typeof formSchema>>({
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+  } = useForm<FormData>({
     resolver: zodResolver(formSchema),
     defaultValues: {
       movieTitle: "",
     },
   });
-  const [hasSearched, setHasSearched] = useState(false);
-
-  const fetchWatchlistMovies = async (userId: string) => {
-    setIsLoading(true);
-    try {
-      const { user } = await fetchMongoDBUser(userId);
-      setWatchlistMovies(user.watchlist);
-    } catch (error) {
-      setErrorMessage("Failed to fetch watchlist. Please try again.");
-    }
-    setIsLoading(false);
-  };
 
   useEffect(() => {
     if (userId) {
@@ -52,28 +45,26 @@ const Movies = () => {
     }
   }, [userId]);
 
-  async function onSubmit(formData: z.infer<typeof formSchema>) {
+  async function onSubmit(formData: FormData) {
     setIsLoadingQuery(true);
     setHasSearched(true);
     try {
-      const response = await fetch(`/api/tmdb?query=${formData.movieTitle}`, {
-        method: "GET",
-        headers: {
-          "Content-Type": "application/json",
-        },
-      });
-
+      const response = await fetch(`/api/tmdb?query=${formData.movieTitle}`);
       if (!response.ok) {
-        throw new Error(`Failed to look up movie: ${response.status}`);
+        throw new Error(`HTTP error! status: ${response.status}`);
       }
-
       const { success, data } = await response.json();
-
       if (success) {
         setMovieSuggestions(data.results);
+      } else {
+        throw new Error("API returned unsuccessful response");
       }
     } catch (error) {
-      setErrorMessage("Failed to add movie to watchlist. Please try again.");
+      setErrorMessage(
+        `Failed to search movies: ${
+          error instanceof Error ? error.message : "Unknown error"
+        }`
+      );
     } finally {
       setIsLoadingQuery(false);
     }
@@ -112,19 +103,20 @@ const Movies = () => {
         <div className="grow basis-3/12">
           <h2 className="text-2xl font-bold mb-4">Movies</h2>
           <form
-            onSubmit={formMethods.handleSubmit(onSubmit)}
+            onSubmit={handleSubmit(onSubmit)}
             className="space-y-8 flex gap-4 items-end"
           >
             <div>
               <label htmlFor="name">Search trackable movies here</label>
               <input
+                {...register("movieTitle")}
                 type="text"
                 placeholder="Movie title"
                 className="input input-bordered w-full max-w-xs"
-                id="movieTitle"
-                name="movieTitle"
               />
-              {/* {state?.errors?.username && <p>{state.errors.username}</p>} */}
+              {errors.movieTitle && (
+                <p className="text-red-500">{errors.movieTitle.message}</p>
+              )}
             </div>
             <button type="submit" className="btn mt-auto">
               {isLoadingQuery ? (

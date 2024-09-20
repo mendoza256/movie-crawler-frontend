@@ -39,29 +39,53 @@ export async function signup(state: FormState, formData: FormData) {
   }
 
   const { username, email, password } = validatedFields.data;
+
+  // check if user already exists
+  const user = await User.findOne({ email });
+  if (user) {
+    return {
+      errors: {
+        email: ["User already exists"],
+      },
+    };
+  }
+
+  // check if username already exists
+  const usernameUser = await User.findOne({ username });
+  if (usernameUser) {
+    return {
+      errors: {
+        username: ["Username already exists"],
+      },
+    };
+  }
+
   const hashedPassword = await bcrypt.hash(password, 10);
 
-  // TODO use something else then Math.random for the id?
-  const newUser = new User({
-    username: username,
-    email: email,
-    password: hashedPassword,
-    watchlist: [],
-    id: Math.random().toString(36).substr(2, 9),
-  });
-
-  // If the form is valid, create a new user
   await dbConnect();
-  const user = await User.create(newUser);
+  try {
+    const user = await User.create({
+      username: username,
+      email: email,
+      password: hashedPassword,
+    });
 
-  if (!user) {
+    console.log("user", user);
+
+    if (!user) {
+      return {
+        message: "An error occurred while creating your account.",
+      };
+    }
+
+    await createSession(user._id);
+    redirect("/");
+  } catch (error) {
+    console.error("Error creating user:", error);
     return {
       message: "An error occurred while creating your account.",
     };
   }
-
-  createSession(user.id);
-  redirect("/");
 }
 
 export async function logout() {
@@ -111,6 +135,7 @@ export async function login(state: FormState, formData: FormData) {
 export async function getUser() {
   const cookie = cookies().get("session")?.value;
   const session = await decrypt(cookie);
+  console.log("session", session?.userId);
 
   if (!session) {
     return null;

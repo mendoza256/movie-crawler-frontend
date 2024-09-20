@@ -1,7 +1,8 @@
+import { ObjectId } from "mongodb";
 import mongoose, { Document, Model, Schema } from "mongoose";
 
 export interface SessionProps extends Document {
-  userId: number;
+  userId: ObjectId;
   expiresAt: Date;
   iat?: number;
   exp?: number;
@@ -10,7 +11,7 @@ export interface SessionProps extends Document {
 }
 
 const SessionSchema: Schema = new Schema({
-  userId: { type: Number, required: false },
+  userId: { type: ObjectId, required: false },
   expiresAt: { type: Date, required: false },
   createdAt: { type: Date, required: false },
   sessionToken: { type: String, required: false },

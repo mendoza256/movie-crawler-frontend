@@ -3,10 +3,10 @@
 import { DbMovieType, WatchlistMovieType } from "@/app/lib/baseTypes";
 import { shortenMovieOverview } from "@/app/lib/utils";
 import Image from "next/image";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 
 interface WatchlistProps {
-  watchlistMovies: DbMovieType[];
+  watchlistMovies: DbMovieType[] | null;
 }
 
 const Watchlist = ({ watchlistMovies }: WatchlistProps) => {
@@ -14,7 +14,7 @@ const Watchlist = ({ watchlistMovies }: WatchlistProps) => {
 
   async function removeFromWatchlist(
     e: React.MouseEvent<HTMLButtonElement>,
-    movie: WatchlistMovieType
+    movieId: string
   ) {
     setPosting(true);
     e.preventDefault();
@@ -24,7 +24,7 @@ const Watchlist = ({ watchlistMovies }: WatchlistProps) => {
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify({ movie }),
+        body: JSON.stringify({ movieId }),
         cache: "no-cache",
       });
       setPosting(false);
@@ -34,12 +34,16 @@ const Watchlist = ({ watchlistMovies }: WatchlistProps) => {
     }
   }
 
+  if (!watchlistMovies) {
+    return <div>No movies in watchlist</div>;
+  }
+
   return (
     <>
       {watchlistMovies.length >= 1 &&
         watchlistMovies.map((movie) => (
           <div
-            key={movie.id}
+            key={movie._id}
             className="card shadow-xl image-full before:content-none hover:before:content-[''] transition-all duration-300 ease-in-out"
           >
             <figure>
@@ -58,7 +62,7 @@ const Watchlist = ({ watchlistMovies }: WatchlistProps) => {
               {movie && (
                 <div className="card-actions justify-end">
                   <button
-                    onClick={(e) => removeFromWatchlist(e, movie)}
+                    onClick={(e) => removeFromWatchlist(e, movie._id)}
                     className="btn btn-primary min-w-12"
                   >
                     {posting ? (

@@ -61,10 +61,10 @@ export async function POST(req: Request, res: NextApiResponse) {
 export async function DELETE(req: Request, res: NextResponse) {
   try {
     const body = await req.json();
-    const { movie } = body;
+    const { movieId } = body;
     const user = await currentUser();
 
-    if (!user || !user?.id || movie === undefined) {
+    if (!user || !user?.id || movieId === undefined) {
       return NextResponse.json({ success: false });
     }
 
@@ -73,7 +73,7 @@ export async function DELETE(req: Request, res: NextResponse) {
     try {
       const updatedUser = await User.findOneAndUpdate(
         { id: user.id },
-        { $pull: { watchlist: { id: movie.id } } },
+        { $pull: { watchlist: { _id: movieId } } },
         { new: true }
       );
       return NextResponse.json({ success: true, data: updatedUser });
