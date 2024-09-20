@@ -1,4 +1,5 @@
 export type DbMovieType = {
+  _id: string;
   title: string;
   cinemaName: string;
   cinemaUrl: string;

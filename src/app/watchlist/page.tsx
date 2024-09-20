@@ -1,30 +1,24 @@
 import Watchlist from "./watchlist";
 import { getUser } from "../actions/auth";
-import { useState } from "react";
-import { WatchlistMovieType } from "../lib/baseTypes";
 import { UserProps } from "@/models/User";
 
-async function getMoviesFromWatchlistIds(watchlist: number[]) {
-  const response = await fetch(`/api/watchlist?movieTitle=${movieTitle}`);
-  const data = await response.json();
-  return data.data;
-}
-
 const WatchlistPage = async () => {
-  // TODO - get watchlist ids, then movies from user
+  // TODO - get watchlist ids, then movies from db
   const user: UserProps = await getUser();
   const watchlistIds = user.watchlist;
   console.log("watchlistIds", watchlistIds);
 
   const watchlistMovies =
-    watchlistIds &&
-    (await Promise.all(
-      watchlistIds.map(async (id) => {
-        const response = await fetch(`/api/watchlist?movieId=${id}`);
-        const data = await response.json();
-        return data.data;
-      })
-    ));
+    (watchlistIds &&
+      (await Promise.all(
+        watchlistIds.map(async (id) => {
+          const response = await fetch(`/api/watchlist?movieId=${id}`);
+
+          const data = await response.json();
+          return data.data;
+        })
+      ))) ||
+    null;
 
   console.log("watchlistMovies", watchlistMovies);
 

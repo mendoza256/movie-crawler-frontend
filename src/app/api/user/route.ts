@@ -3,27 +3,6 @@ import User from "@/models/User";
 import dbConnect from "@/app/lib/mongoose";
 import { NextRequest, NextResponse } from "next/server";
 
-export async function POST(req: Request) {
-  const body = await req.json();
-  await dbConnect();
-  const { id, first_name, last_name, primary_email_address_id } = body.data;
-  const watchlist = [] as string[];
-  const newUser = {
-    id,
-    first_name,
-    last_name,
-    primary_email_address_id,
-    watchlist,
-  };
-
-  try {
-    const user = await User.create(newUser);
-    return NextResponse.json({ success: true, data: user });
-  } catch (error) {
-    return NextResponse.json({ success: false });
-  }
-}
-
 export async function PUT(req: NextRequest, res: NextResponse) {
   await dbConnect();
 
@@ -37,18 +16,6 @@ export async function PUT(req: NextRequest, res: NextResponse) {
       new: true,
       runValidators: true,
     }); /* update a model in the database */
-    return NextResponse.json({ success: true, data: user });
-  } catch (error) {
-    return NextResponse.json({ success: false });
-  }
-}
-
-export async function GET(req: NextRequest, res: NextResponse) {
-  await dbConnect();
-  const userId = req.nextUrl.searchParams.get("id");
-
-  try {
-    const user = await User.findOne({ id: userId });
     return NextResponse.json({ success: true, data: user });
   } catch (error) {
     return NextResponse.json({ success: false });

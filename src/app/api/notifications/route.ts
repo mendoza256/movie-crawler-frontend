@@ -4,7 +4,6 @@ import Movie from "@/models/Movie";
 import User from "@/models/User";
 import { currentUser } from "@clerk/nextjs";
 import { NextRequest, NextResponse } from "next/server";
-import { Resend } from "resend";
 
 export async function GET(req: NextRequest, res: NextResponse) {
   const user = await currentUser();
@@ -14,7 +13,7 @@ export async function GET(req: NextRequest, res: NextResponse) {
     return NextResponse.json({ success: false });
   }
 
-  dbConnect();
+  await dbConnect();
 
   try {
     const mongoUser = await User.findOne({ id: user.id });
