@@ -8,22 +8,22 @@ import dbConnect from "@/app/lib/mongoose";
 export async function POST(req: Request, res: NextApiResponse) {
   try {
     const body = await req.json();
-    const { movie } = body;
+    const { movieId } = body;
     const user = await currentUser();
 
-    if (!user || !user?.id || movie === undefined) {
+    if (!user || !user?.id || movieId === undefined) {
       return NextResponse.json({ success: false });
     }
 
     await dbConnect();
-    console.log("movie", movie.title);
+    console.log("movie id:", movieId);
     try {
-      const foundMovie = await Movie.findOne({ id: movie.id });
+      const foundMovie = await Movie.findOne({ tmdbId: movieId });
       if (!foundMovie) {
         console.log("Movie not in DB");
         const newMovie = new Movie({
           tmdbData: movie,
-          id: movie.id,
+          tmdbId: movie.id,
           title: movie.title,
         });
         console.log("Saving movie");

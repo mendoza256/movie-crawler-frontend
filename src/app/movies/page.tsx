@@ -4,11 +4,11 @@ import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { useEffect, useState } from "react";
-import { fetchMongoDBUser } from "@/fetchData/fetchMongoDBUser";
 import { cn } from "@/app/lib/utils";
 import MovieSuggestions from "./movieSuggestions";
-import { TMDBMovieType } from "@/app/lib/baseTypes";
 import { useMovies } from "@/hooks/useMovies";
+import { useTrendingTmdbMovies } from "@/hooks/useTmdbMovies";
+import { useTmdbSearch } from "@/hooks/useTmdbSearch";
 
 const formSchema = z.object({
   movieTitle: z.string().min(4).max(50),
@@ -20,14 +20,20 @@ const Movies = () => {
   // TODO - add movies to watchlist
   const userId = undefined;
   const { watchlistMovies, isLoading, error } = useMovies(userId);
+  const {
+    trendingMovies,
+    isLoading: isLoadingTrending,
+    error: trendingError,
+  } = useTrendingTmdbMovies();
 
-  const [isLoadingQuery, setIsLoadingQuery] = useState(false);
+  const { searchResults, isSearchLoading, searchError, setKeyword } =
+    useTmdbSearch();
+
   const [successMessage, setSuccessMessage] = useState("");
   const [shouldShowMessage, setShouldShowMessage] = useState(false);
-  const [hasSearched, setHasSearched] = useState(false);
-  const [movieSuggestions, setMovieSuggestions] = useState(
-    [] as TMDBMovieType[]
-  );
+  const [isSearching, setIsSearching] = useState(false);
+  const [showTrending, setShowTrending] = useState(true);
+
   const {
     register,
     handleSubmit,
@@ -46,56 +52,11 @@ const Movies = () => {
   }, [userId]);
 
   async function onSubmit(formData: FormData) {
-    setIsLoadingQuery(true);
-    setHasSearched(true);
-    try {
-      const response = await fetch(`/api/tmdb?query=${formData.movieTitle}`);
-      if (!response.ok) {
-        throw new Error(`HTTP error! status: ${response.status}`);
-      }
-      const { success, data } = await response.json();
-      if (success) {
-        setMovieSuggestions(data.results);
-      } else {
-        throw new Error("API returned unsuccessful response");
-      }
-    } catch (error) {
-      setErrorMessage(
-        `Failed to search movies: ${
-          error instanceof Error ? error.message : "Unknown error"
-        }`
-      );
-    } finally {
-      setIsLoadingQuery(false);
-    }
+    setIsSearching(true);
+    setShowTrending(false);
+    setKeyword(formData.movieTitle);
+    setIsSearching(false);
   }
-
-  async function getTrendingMovies() {
-    setIsLoadingQuery(true);
-    try {
-      const res = await fetch(`/api/tmdb/trending`);
-
-      if (!res.ok) {
-        throw new Error(`Failed to look up movie: ${res.status}`);
-      }
-
-      const { success, data } = await res.json();
-
-      if (success) {
-        setMovieSuggestions(data.results);
-      }
-    } catch (error) {
-      setErrorMessage("Failed to add movie to watchlist. Please try again.");
-    } finally {
-      setIsLoadingQuery(false);
-    }
-  }
-
-  useEffect(() => {
-    if (!hasSearched) {
-      getTrendingMovies();
-    }
-  }, [hasSearched]);
 
   return (
     <section className="mt-10">
@@ -119,7 +80,7 @@ const Movies = () => {
               )}
             </div>
             <button type="submit" className="btn mt-auto">
-              {isLoadingQuery ? (
+              {isSearching ? (
                 <span className="loading loading-spinner loading-lg"></span>
               ) : (
                 "Search"
@@ -141,11 +102,24 @@ const Movies = () => {
           </div>
         </div>
         <div className="basis-9/12 lg:col-span-2 grid gap-8 lg:grid-cols-4 auto-rows-auto">
-          <MovieSuggestions
-            movieSuggestions={movieSuggestions}
-            loading={isLoadingQuery}
-            watchlist={watchlistMovies}
-          />
+          {showTrending ? (
+            <MovieSuggestions
+              movieSuggestions={trendingMovies}
+              loading={isSearching}
+              isLoadingTrending={isLoadingTrending}
+              watchlist={watchlistMovies}
+            />
+          ) : (
+            <MovieSuggestions
+              movieSuggestions={searchResults}
+              loading={isSearchLoading}
+              isLoadingTrending={isLoadingTrending}
+              watchlist={watchlistMovies}
+            />
+          )}
+          {searchError && <p>{searchError}</p>}
+          {trendingError && <p>{trendingError}</p>}
+          {error && <p>{error}</p>}
         </div>
       </div>
     </section>

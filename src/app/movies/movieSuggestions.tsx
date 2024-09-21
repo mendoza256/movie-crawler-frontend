@@ -2,18 +2,21 @@
 
 import { TMDBMovieType, WatchlistMovieType } from "@/app/lib/baseTypes";
 import { shortenMovieOverview } from "@/app/lib/utils";
+import { addToWatchlist, removeFromWatchlist } from "@/fetchData/watchlist";
 import Image from "next/image";
 import { useState } from "react";
 
 interface MovieSuggestionsProps {
   movieSuggestions: TMDBMovieType[];
   loading: boolean;
+  isLoadingTrending: boolean;
   watchlist: WatchlistMovieType[];
 }
 
 const MovieSuggestions = ({
   movieSuggestions,
   loading,
+  isLoadingTrending,
   watchlist,
 }: MovieSuggestionsProps) => {
   const [posting, setPosting] = useState(false);
@@ -22,21 +25,16 @@ const MovieSuggestions = ({
     (movie) => movie.poster_path !== null && movie.release_date !== ""
   );
 
-  async function addToWatchlist(
+  // FIXME movie db has to be updated with new ids
+
+  async function handleAddToWatchlist(
     e: React.MouseEvent<HTMLButtonElement>,
-    movie: TMDBMovieType
+    movieId: number
   ) {
     setPosting(true);
     e.preventDefault();
     try {
-      await fetch("/api/user/watchlist", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ movie }),
-        cache: "no-cache",
-      });
+      await addToWatchlist(movieId);
       setPosting(false);
     } catch (error) {
       console.error(error);
@@ -44,21 +42,14 @@ const MovieSuggestions = ({
     }
   }
 
-  async function removeFromWatchlist(
+  async function handleRemoveFromWatchlist(
     e: React.MouseEvent<HTMLButtonElement>,
     movie: TMDBMovieType
   ) {
     setPosting(true);
     e.preventDefault();
     try {
-      await fetch("/api/user/watchlist", {
-        method: "DELETE",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ movie }),
-        cache: "no-cache",
-      });
+      await removeFromWatchlist(movie.id);
       setPosting(false);
     } catch (error) {
       console.error(error);
@@ -72,7 +63,7 @@ const MovieSuggestions = ({
         filteredSuggestions &&
         filteredSuggestions.map((movie) => {
           const isWatchlisted = watchlist.some(
-            (watchlistMovie) => watchlistMovie.id === movie.id
+            (watchlistMovie) => watchlistMovie.tmdbId === movie.id
           );
           return (
             <div
@@ -95,7 +86,7 @@ const MovieSuggestions = ({
                 <div className="card-actions justify-end">
                   {isWatchlisted ? (
                     <button
-                      onClick={(e) => removeFromWatchlist(e, movie)}
+                      onClick={(e) => handleRemoveFromWatchlist(e, movie)}
                       className="btn btn-primary min-w-12"
                     >
                       {posting ? (
@@ -106,7 +97,7 @@ const MovieSuggestions = ({
                     </button>
                   ) : (
                     <button
-                      onClick={(e) => addToWatchlist(e, movie)}
+                      onClick={(e) => handleAddToWatchlist(e, movie.id)}
                       className="btn btn-primary min-w-12"
                     >
                       {posting ? (
@@ -121,10 +112,11 @@ const MovieSuggestions = ({
             </div>
           );
         })}
-      {loading &&
-        Array.from({ length: skeletonAmount }).map((_, index) => (
-          <div key={index} className="skeleton w-full h-[423px]"></div>
-        ))}
+      {loading ||
+        (isLoadingTrending &&
+          Array.from({ length: skeletonAmount }).map((_, index) => (
+            <div key={index} className="skeleton w-full h-[423px]"></div>
+          )))}
     </>
   );
 };

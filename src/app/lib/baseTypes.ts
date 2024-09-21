@@ -5,6 +5,7 @@ export type DbMovieType = {
   cinemaUrl: string;
   movieUrl: string;
   tmdbData: TMDBMovieType;
+  tmdbId: number;
 };
 
 export type TMDBMovieType = {
@@ -21,7 +22,7 @@ export type TMDBMovieType = {
 export type WatchlistMovieType = {
   title: string;
   date_added: string;
-  id: number;
+  tmdbId: number;
   tmdbData: TMDBMovieType;
   sent_email: boolean;
 };
